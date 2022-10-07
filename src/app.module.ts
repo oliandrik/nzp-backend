@@ -1,0 +1,40 @@
+import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
+import { AppController } from './app.controller';
+import { AppService } from './app.service';
+import { AuthModule } from './auth/auth.module';
+import { ClientsModule } from './clients/clients.module';
+import { Client } from './clients/entity/client.entity';
+import { User } from './users/entity/user.entity';
+import { UsersModule } from './users/users.module';
+
+import { ServiceCategory } from './service-categories/entity/service-categories.entity';
+import { ServiceCategoriesModule } from './service-categories/service-categories.module';
+import { ServicesModule } from './services/services.module';
+
+@Module({
+  imports: [
+    ConfigModule.forRoot({
+      envFilePath: '.env',
+    }),
+    TypeOrmModule.forRoot({
+      type: 'mysql',
+      host: `${process.env.HOST_DATABASE}`,
+      port: 3306,
+      username: `${process.env.USERNAME_DATABASE}`,
+      password: `${process.env.PASSWORD_DATABASE}`,
+      database: `${process.env.DATABASE}`,
+      entities: [User, Client, ServiceCategory],
+      synchronize: true,
+    }),
+    UsersModule,
+    ClientsModule,
+    AuthModule,
+    ServicesModule,
+    ServiceCategoriesModule,
+  ],
+  controllers: [AppController],
+  providers: [AppService],
+})
+export class AppModule {}
