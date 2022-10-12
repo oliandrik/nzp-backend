@@ -5,12 +5,13 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ClientsModule } from './clients/clients.module';
-import { Client } from './clients/entity/client.entity';
-import { User } from './users/entity/user.entity';
+import { Client } from './clients/entities/client.entity';
+import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
-import { ServiceCategory } from './service-categories/entity/service-categories.entity';
+import { ServiceCategory } from './service-categories/entities/service-categories.entity';
 import { ServiceCategoriesModule } from './service-categories/service-categories.module';
+import { Service } from './services/entities/service.entity';
 import { ServicesModule } from './services/services.module';
 
 @Module({
@@ -25,7 +26,7 @@ import { ServicesModule } from './services/services.module';
       username: `${process.env.USERNAME_DATABASE}`,
       password: `${process.env.PASSWORD_DATABASE}`,
       database: `${process.env.DATABASE}`,
-      entities: [User, Client, ServiceCategory],
+      entities: [User, Client, ServiceCategory, Service],
       synchronize: true,
     }),
     UsersModule,

@@ -1,17 +1,23 @@
-import { ServiceCategory } from 'src/service-categories/entity/service-categories.entity';
+import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 
 import {
   CancelService,
+  DripFeedService,
   LinkDuplicateService,
   ModeService,
-} from '../entity/service.entity';
+  StatusService,
+  TypeService,
+} from '../entities/service.entity';
 
 export class ServiceDto {
   id: bigint;
   service_name: string;
-  category: ServiceCategory | null;
+  category: string;
   mode: ModeService;
+  type: TypeService;
   provider: null;
+  service: null;
+  drip_feed: DripFeedService;
   cancel: CancelService;
   rate_per: number;
   min_order: number;
@@ -19,4 +25,5 @@ export class ServiceDto {
   link_duplicate: LinkDuplicateService;
   increment: number;
   overflow: number;
+  status: StatusService;
 }

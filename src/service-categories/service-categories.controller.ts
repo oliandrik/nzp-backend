@@ -1,14 +1,21 @@
+import { diskStorage } from 'multer';
+
 import {
   Body,
   Controller,
   Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Param,
   Post,
   Put,
+  UploadedFile,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { ServiceCategoryDto } from './dto/service-categories.dto';
 
 import { ServiceCategoriesService } from './service-categories.service';
@@ -25,11 +32,38 @@ export class ServiceCategoriesController {
     return await this.serviceCategoriesService.getAllServiceCategories();
   }
 
+  // @UseGuards(AuthGuard('jwt'))
+  @UseInterceptors(
+    FileInterceptor('icon', {
+      storage: diskStorage({
+        destination: './uploads/categoryIcons',
+        filename: (req, icon, cb) => {
+          const name: string = icon.originalname.split('.')[0];
+          const fileExtension = icon.originalname.split('.');
+          const newFilename: string =
+            name.split(' ').join('_') +
+            '_' +
+            Date.now() +
+            '.' +
+            fileExtension[fileExtension.length - 1];
+          cb(null, newFilename);
+        },
+      }),
+    }),
+  )
   @Post()
-  async createServiceCategory(@Body() category: ServiceCategoryDto) {
-    return await this.serviceCategoriesService.createServiceCategory(category);
+  @HttpCode(HttpStatus.CREATED)
+  async createServiceCategory(
+    @Body() category: ServiceCategoryDto,
+    @UploadedFile() icon: Express.Multer.File,
+  ) {
+    return await this.serviceCategoriesService.createServiceCategory(
+      category,
+      icon,
+    );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Put(':id')
   async updateServiceCategory(
     @Param('id') id: number,
@@ -41,6 +75,7 @@ export class ServiceCategoriesController {
     );
   }
 
+  @UseGuards(AuthGuard('jwt'))
   @Delete(':id')
   async deleteServiceCategory(@Param('id') id: number) {
     return await this.serviceCategoriesService.deleteServiceCategory(id);

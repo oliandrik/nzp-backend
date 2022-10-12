@@ -1,11 +1,12 @@
 import {
   CategoryPosition,
   CategoryStatus,
-} from '../entity/service-categories.entity';
+} from '../entities/service-categories.entity';
 
 export class ServiceCategoryDto {
   id: bigint;
   category_name: string;
   position: CategoryPosition;
+  icon: string;
   status: CategoryStatus;
 }

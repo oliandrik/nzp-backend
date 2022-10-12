@@ -3,7 +3,7 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientDto } from './dto/client.dto';
-import { Client, ClientGender } from './entity/client.entity';
+import { Client, ClientGender } from './entities/client.entity';
 
 @Injectable()
 export class ClientsService {
@@ -45,7 +45,6 @@ export class ClientsService {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');
 
-    console.log(findUser, '1');
     if (findUser.avatar !== null) {
       fs.unlink(`./uploads/avatars/${findUser.avatar}`, function (err) {
         if (err) {
@@ -56,8 +55,7 @@ export class ClientsService {
       });
       delete findUser.avatar;
     }
-    console.log('-----------');
-    console.log(findUser, '2');
+
     const upd = await this.clientRepository
       .createQueryBuilder()
       .update()

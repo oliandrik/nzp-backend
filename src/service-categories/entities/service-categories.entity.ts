@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Service } from 'src/services/entities/service.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+} from 'typeorm';
 
 export enum CategoryPosition {
   top = 'top',
@@ -24,9 +31,17 @@ export class ServiceCategory {
   @Column({ type: 'enum', enum: CategoryStatus })
   status: CategoryStatus;
 
+  @Column({ default: null })
+  icon: string;
+
   @Column()
   createdAt: Date;
 
   @Column()
   updatedAt: Date;
+
+  // (1 service categories can have many services)
+
+  // @OneToMany(() => Service, (service) => service.category, { cascade: true })
+  // services: Service[];
 }

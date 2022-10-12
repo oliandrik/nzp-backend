@@ -1,13 +1,12 @@
 import * as bcrypt from 'bcrypt';
-import { ClientDto } from 'src/clients/dto/client.dto';
 import {
   Client,
   ClientGender,
   ClientRank,
   ClientStatus,
-} from 'src/clients/entity/client.entity';
+} from 'src/clients/entities/client.entity';
 import { UserDto } from 'src/users/dto/user.dto';
-import { User, UserRole } from 'src/users/entity/user.entity';
+import { User, UserRole } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 
 import {

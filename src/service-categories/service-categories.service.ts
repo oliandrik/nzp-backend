@@ -1,13 +1,18 @@
 import { Repository } from 'typeorm';
 
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceCategoryDto } from './dto/service-categories.dto';
 import {
   CategoryPosition,
   CategoryStatus,
   ServiceCategory,
-} from './entity/service-categories.entity';
+} from './entities/service-categories.entity';
 
 @Injectable()
 export class ServiceCategoriesService {
@@ -20,43 +25,39 @@ export class ServiceCategoriesService {
     return await this.serviceCategoryRepository.find();
   }
 
-  async findServiceCategory(category, check) {
-    let isServiceCategory;
+  async byName(categoryName: string) {
+    const category = await this.serviceCategoryRepository.findOne({
+      where: { category_name: categoryName },
+    });
 
-    console.log(category, 'cats');
-    switch (check) {
-      case 'by_name':
-        isServiceCategory = await this.serviceCategoryRepository.findOne({
-          where: { category_name: category.category_name },
-        });
-        break;
-      case 'by_id':
-        isServiceCategory = await this.serviceCategoryRepository.findOne({
-          where: { id: category.id || category },
-        });
-        break;
-      default:
-        break;
-    }
-
-    if (check === 'by_name' && isServiceCategory) {
+    if (category) {
       throw new BadRequestException('This category already exists');
     }
+    return category;
+  }
+  async byId(id) {
+    const categoryId = await this.serviceCategoryRepository.findOne({
+      where: { id: id },
+    });
 
-    if (check === 'by_id' && !isServiceCategory) {
-      throw new BadRequestException("This category isn't exists");
+    if (!categoryId) {
+      throw new HttpException(
+        "This category isn't exists",
+        HttpStatus.FORBIDDEN,
+      );
     }
 
-    return isServiceCategory;
+    return categoryId;
   }
 
-  async createServiceCategory(category: ServiceCategoryDto) {
-    await this.findServiceCategory(category, 'by_id');
+  async createServiceCategory(category: ServiceCategoryDto, icon) {
+    await this.byName(category.category_name);
 
     const newServiceCategory = this.serviceCategoryRepository.create({
       category_name: category.category_name,
       position: CategoryPosition[category.position],
       status: CategoryStatus.enable,
+      icon: icon.filename,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -65,7 +66,7 @@ export class ServiceCategoriesService {
   }
 
   async updateServiceCategory(id, updInfo: ServiceCategoryDto) {
-    await this.findServiceCategory(id, 'by_id');
+    await this.byId(id);
 
     return (
       await this.serviceCategoryRepository
@@ -79,15 +80,16 @@ export class ServiceCategoriesService {
         })
         .where('id = :id', { id: id })
         .execute(),
-      { message: 'service category was updated' }
+      { message: 'Service category was updated' }
     );
   }
 
   async deleteServiceCategory(id) {
-    await this.findServiceCategory(id, 'by_id');
+    await this.byId(id);
+
     return (
       await this.serviceCategoryRepository.delete(id),
-      { message: 'successfully deleted' }
+      { message: 'Service category was successfully deleted' }
     );
   }
 }

@@ -1,7 +1,6 @@
 import { ClientsModule } from 'src/clients/clients.module';
-import { ClientsService } from 'src/clients/clients.service';
-import { Client } from 'src/clients/entity/client.entity';
-import { User } from 'src/users/entity/user.entity';
+import { Client } from 'src/clients/entities/client.entity';
+import { User } from 'src/users/entities/user.entity';
 import { UsersModule } from 'src/users/users.module';
 
 import { Module } from '@nestjs/common';

@@ -1,5 +1,5 @@
 import { IsDefined, IsNotEmpty, IsEmail, MinLength } from 'class-validator';
-import { ClientStatus } from 'src/clients/entity/client.entity';
+import { ClientStatus } from 'src/clients/entities/client.entity';
 
 export class SignUp {
   @IsDefined()

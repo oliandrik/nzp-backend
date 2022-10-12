@@ -7,8 +7,6 @@ import {
   Body,
   Controller,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Put,
   Res,
@@ -25,10 +23,9 @@ import { ClientDto } from './dto/client.dto';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  // @UseGuards(AuthGuard('jwt'))
+  @UseGuards(AuthGuard('jwt'))
   @Put('/change-gender/:id')
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
-    console.log(id);
     return await this.clientsService.changeGender(clientDto, id);
   }
 
@@ -47,8 +44,6 @@ export class ClientsController {
             Date.now() +
             '.' +
             fileExtension[fileExtension.length - 1];
-
-          console.log(newFilename, 'newFilename');
           cb(null, newFilename);
         },
       }),

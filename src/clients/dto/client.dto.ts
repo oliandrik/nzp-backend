@@ -1,4 +1,4 @@
-import { ClientGender } from '../entity/client.entity';
+import { ClientGender } from '../entities/client.entity';
 
 export class ClientDto {
   id: bigint;
