@@ -35,6 +35,7 @@ export class ServiceCategoriesService {
     }
     return category;
   }
+
   async byId(id) {
     const categoryId = await this.serviceCategoryRepository.findOne({
       where: { id: id },
@@ -56,7 +57,7 @@ export class ServiceCategoriesService {
     const newServiceCategory = this.serviceCategoryRepository.create({
       category_name: category.category_name,
       position: CategoryPosition[category.position],
-      status: CategoryStatus.enable,
+      status: CategoryStatus.enabled,
       icon: icon.filename,
       createdAt: new Date(),
       updatedAt: new Date(),

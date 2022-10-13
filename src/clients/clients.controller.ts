@@ -70,4 +70,19 @@ export class ClientsController {
   async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
     res.sendFile(avatar, { root: './uploads/avatars' });
   }
+
+  @Get('asc/:param')
+  async getClientsInfoByASC(@Param() param) {
+    return await this.clientsService.sortByASC(param.param);
+  }
+
+  @Get('desc/:param')
+  async getClientsInfoByDESC(@Param() param) {
+    return await this.clientsService.sortByDESC(param.param);
+  }
+
+  @Get('status/:param')
+  async getClientsByStatus(@Param() param) {
+    return await this.clientsService.sortByStatus(param.param);
+  }
 }

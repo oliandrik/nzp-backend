@@ -67,4 +67,24 @@ export class ClientsService {
 
     return upd;
   }
+
+  // SORT
+
+  async sortByASC(param) {
+    return await this.clientRepository.query(
+      `SELECT * FROM clients ORDER BY ${param} ASC`,
+    );
+  }
+
+  async sortByDESC(param) {
+    return await this.clientRepository.query(
+      `SELECT * FROM clients ORDER BY ${param} DESC`,
+    );
+  }
+
+  async sortByStatus(param) {
+    return await this.clientRepository.query(
+      `SELECT * FROM clients WHERE status = '${param}'`,
+    );
+  }
 }

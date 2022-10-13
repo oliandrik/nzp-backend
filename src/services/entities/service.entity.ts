@@ -13,13 +13,13 @@ export enum ModeService {
 }
 
 export enum DripFeedService {
-  allow = 'allow',
-  dissallow = 'dissallow',
+  allowed = 'allowed',
+  disallowed = 'disallowed',
 }
 
 export enum CancelService {
-  allow = 'allow',
-  dissallow = 'dissallow',
+  allowed = 'allowed',
+  disallowed = 'disallowed',
 }
 
 export enum LinkDuplicateService {
@@ -28,8 +28,8 @@ export enum LinkDuplicateService {
 }
 
 export enum StatusService {
-  enable = 'enable',
-  disable = 'disable',
+  enabled = 'enabled',
+  disabled = 'disabled',
 }
 
 export enum TypeService {

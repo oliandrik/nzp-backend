@@ -51,7 +51,7 @@ export class ServicesService {
       link_duplicate: LinkDuplicateService[service.link_duplicate],
       increment: service.increment,
       overflow: service.overflow,
-      status: StatusService.enable,
+      status: StatusService.enabled,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -95,13 +95,13 @@ export class ServicesService {
   // SORT
   async getEnableStatus() {
     return await this.serviceRepository.query(
-      'SELECT * FROM services WHERE status = "enable"',
+      'SELECT * FROM services WHERE status = "enabled"',
     );
   }
 
   async getDisableStatus() {
     return await this.serviceRepository.query(
-      'SELECT * FROM services WHERE status = "disable"',
+      'SELECT * FROM services WHERE status = "disabled"',
     );
   }
 
@@ -138,7 +138,7 @@ export class ServicesService {
           link_duplicate: LinkDuplicateService[service.link_duplicate],
           increment: service.increment,
           overflow: service.overflow,
-          status: StatusService.enable,
+          status: StatusService.enabled,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })
@@ -155,7 +155,7 @@ export class ServicesService {
         .update()
         .set({
           ...foundService,
-          status: StatusService.disable,
+          status: StatusService.disabled,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })
@@ -172,7 +172,7 @@ export class ServicesService {
         .update()
         .set({
           ...foundService,
-          status: StatusService.enable,
+          status: StatusService.enabled,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })

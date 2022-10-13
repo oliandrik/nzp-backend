@@ -20,12 +20,12 @@ export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   // SORT
-  @Get('enable')
+  @Get('enabled')
   async getEnableStatus() {
     return await this.servicesService.getEnableStatus();
   }
 
-  @Get('disable')
+  @Get('disabled')
   async getDisableStatus() {
     return await this.servicesService.getDisableStatus();
   }
@@ -69,12 +69,12 @@ export class ServicesController {
     return await this.servicesService.updateService(id, service);
   }
 
-  @Put('disable/:id')
+  @Put('disabled/:id')
   async makeDisableService(@Param('id') id) {
     return await this.servicesService.makeDisableService(id);
   }
 
-  @Put('enable/:id')
+  @Put('enabled/:id')
   async makeEnableService(@Param('id') id) {
     return await this.servicesService.makeEnableService(id);
   }

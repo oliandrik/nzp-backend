@@ -13,8 +13,8 @@ export enum CategoryPosition {
 }
 
 export enum CategoryStatus {
-  enable = 'enable',
-  disable = 'disable',
+  enabled = 'enabled',
+  disabled = 'disabled',
 }
 
 @Entity({ name: 'service_categories' })
