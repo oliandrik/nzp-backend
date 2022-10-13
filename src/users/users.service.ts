@@ -11,7 +11,7 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async findUser(data) {
+  async byEmail(data) {
     return (
       await this.userRepository.findOne({ where: { email: data } }),
       { message: 'amdin' }

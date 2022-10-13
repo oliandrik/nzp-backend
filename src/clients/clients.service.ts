@@ -12,11 +12,19 @@ export class ClientsService {
     private readonly clientRepository: Repository<Client>,
   ) {}
 
-  async findUser(data) {
-    return await this.clientRepository.findOne({ where: { email: data } });
+  async byEmail(data) {
+    const client = await this.clientRepository.findOne({
+      where: { email: data },
+    });
+
+    if (!client) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
+    return client;
   }
 
-  async findUserById(id) {
+  async byId(id) {
     const client = await this.clientRepository.findOne({
       where: { id: id.id },
     });
@@ -40,7 +48,7 @@ export class ClientsService {
   }
 
   async changeAvatar(avatar, id) {
-    const findUser = await this.findUserById(id);
+    const findUser = await this.byId(id);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');

@@ -42,21 +42,6 @@ export class PaymentMethodsService {
   }
 
   async createPaymentMethod(body) {
-    // let newPaymentMethod;
-    // for (let i = 0; i < 10; i++) {
-    //   newPaymentMethod = await this.paymentMethodRepository.create({
-    //     method_name: Math.random().toString(36).slice(-5),
-    //     minimal_payment: Math.floor(Math.random() * 10),
-    //     maximal_payment: Math.floor(Math.random() * 500),
-    //     new_users:
-    //       Math.random() < 0.5
-    //         ? AllowedForNewUser['allowed']
-    //         : AllowedForNewUser['disallowed'],
-    //     instruction: Math.random().toString(36).slice(-5),
-    //     createdAt: new Date(),
-    //     updatedAt: new Date(),
-    //   });
-    // }
     const newPaymentMethod = await this.paymentMethodRepository.create({
       method_name: body.method_name,
       minimal_payment: body.minimal_payment,
@@ -69,7 +54,50 @@ export class PaymentMethodsService {
     return await this.paymentMethodRepository.save(newPaymentMethod);
   }
 
-  async editPaymentMethod(body) {
-    await this.byId(body.id);
+  async updateService(id, body) {
+    await this.byId(id);
+    return (
+      await this.paymentMethodRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          method_name: body.method_name,
+          minimal_payment: body.minimal_payment,
+          maximal_payment: body.maximal_payment,
+          new_users:
+            AllowedForNewUser[body.new_users] || AllowedForNewUser.allowed,
+          instruction: body.instruction,
+          updatedAt: new Date(),
+        })
+        .where('id = :id', { id: id })
+        .execute(),
+      { message: 'Payment method was updated' }
+    );
+  }
+
+  async changeAccessibilityToNewUsers(id, param) {
+    console.log(id, param);
+    await this.byId(id);
+
+    return (
+      await this.paymentMethodRepository
+        .createQueryBuilder()
+        .update()
+        .set({
+          new_users: AllowedForNewUser[param],
+          updatedAt: new Date(),
+        })
+        .where('id = :id', { id: id })
+        .execute(),
+      { message: 'Payment method for new users was updated' }
+    );
+  }
+
+  async deletePaymentMethod(id) {
+    await this.byId(id);
+
+    return await this.paymentMethodRepository.query(
+      `DELETE FROM payment_methods WHERE id = "${id}"`,
+    );
   }
 }
