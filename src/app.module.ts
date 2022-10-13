@@ -13,6 +13,7 @@ import { ServiceCategory } from './service-categories/entities/service-categorie
 import { ServiceCategoriesModule } from './service-categories/service-categories.module';
 import { Service } from './services/entities/service.entity';
 import { ServicesModule } from './services/services.module';
+import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ServicesModule } from './services/services.module';
     AuthModule,
     ServicesModule,
     ServiceCategoriesModule,
+    PaymentMethodsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
