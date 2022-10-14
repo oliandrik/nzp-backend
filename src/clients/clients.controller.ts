@@ -10,6 +10,7 @@ import {
   HttpCode,
   HttpStatus,
   Param,
+  Post,
   Put,
   Res,
   UploadedFile,
@@ -25,6 +26,13 @@ import { ClientDto } from './dto/client.dto';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
+  // only admin
+  @Get()
+  async getClients() {
+    return await this.clientsService.getClients();
+  }
+
+  //clients
   @UseGuards(AuthGuard('jwt'))
   @Put('/change-gender/:id')
   @HttpCode(HttpStatus.OK)
@@ -33,7 +41,7 @@ export class ClientsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @Put('/change-avatar/:id')
+  @Put(':id/change-avatar')
   @HttpCode(HttpStatus.OK)
   @UseInterceptors(
     FileInterceptor('file', {
@@ -76,6 +84,7 @@ export class ClientsController {
     res.sendFile(avatar, { root: './uploads/avatars' });
   }
 
+  // only admin
   @Get('asc/:param')
   @HttpCode(HttpStatus.OK)
   async getClientsInfoByASC(@Param() param) {
@@ -92,5 +101,10 @@ export class ClientsController {
   @HttpCode(HttpStatus.OK)
   async getClientsByStatus(@Param() param) {
     return await this.clientsService.sortByStatus(param.param);
+  }
+
+  @Post('files')
+  async exportClientsFile(@Body() body) {
+    return await this.clientsService.exportClientsFile(body);
   }
 }

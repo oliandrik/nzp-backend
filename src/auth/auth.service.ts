@@ -74,7 +74,7 @@ export class AuthService {
     return (
       this.clientRepository.save(user),
       {
-        message: 'suuccess',
+        message: 'User was created',
         user: this.returnUserFields(user),
         ...tokens,
       }
@@ -107,7 +107,7 @@ export class AuthService {
     return (
       this.userRepository.save(user),
       {
-        message: 'suuccess',
+        message: 'sign up andmin',
         user: this.returnUserFields(user),
         ...tokens,
       }
@@ -119,7 +119,7 @@ export class AuthService {
     const payload = { email: user.email, id: user.id };
 
     return {
-      message: 'suuccess',
+      message: 'Successfully authenticated',
       accessToken: this.jwtService.sign(payload),
     };
   }

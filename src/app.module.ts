@@ -6,6 +6,8 @@ import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { ClientsModule } from './clients/clients.module';
 import { Client } from './clients/entities/client.entity';
+import { ExportFile } from './export-files/entities/file.entity';
+import { ExportFilesModule } from './export-files/export-files.module';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { User } from './users/entities/user.entity';
@@ -28,7 +30,14 @@ import { ServicesModule } from './services/services.module';
       username: `${process.env.USERNAME_DATABASE}`,
       password: `${process.env.PASSWORD_DATABASE}`,
       database: `${process.env.DATABASE}`,
-      entities: [User, Client, ServiceCategory, Service, PaymentMethod],
+      entities: [
+        User,
+        Client,
+        ServiceCategory,
+        Service,
+        PaymentMethod,
+        ExportFile,
+      ],
       synchronize: true,
     }),
     UsersModule,
@@ -37,6 +46,7 @@ import { ServicesModule } from './services/services.module';
     ServicesModule,
     ServiceCategoriesModule,
     PaymentMethodsModule,
+    ExportFilesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

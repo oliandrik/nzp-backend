@@ -1,3 +1,4 @@
+import { ExportFile } from 'src/export-files/entities/file.entity';
 import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -10,6 +11,9 @@ export class ClientsService {
   constructor(
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
+
+    @InjectRepository(ExportFile)
+    private readonly exportFileRepository: Repository<ExportFile>,
   ) {}
 
   async byEmail(data) {
@@ -34,6 +38,10 @@ export class ClientsService {
     }
 
     return client;
+  }
+
+  async getClients() {
+    return await this.clientRepository.query(`SELECT * FROM clients`);
   }
 
   async changeGender(data: ClientDto, id) {
@@ -74,6 +82,35 @@ export class ClientsService {
       .execute();
 
     return upd;
+  }
+
+  async exportClientsFile(body) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const fs = require('fs');
+
+    const dir = './src/fileToExport';
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+
+    const res = await this.clientRepository.query(
+      `SELECT * FROM clients WHERE status = "${body.status}"`,
+    );
+    const writeStream = fs.createWriteStream(
+      `${dir}/file_clients_${+new Date()}.${body.format}`,
+    );
+
+    const newFile = await this.exportFileRepository.create({
+      filename: `file_clients_${+new Date()}.${body.format}`,
+      export_for: 'clients',
+      createdAt: new Date(),
+    });
+
+    writeStream.write(`${JSON.stringify(res)}`);
+    writeStream.end();
+
+    return await this.exportFileRepository.save(newFile);
   }
 
   // SORT

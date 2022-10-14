@@ -36,22 +36,26 @@ export class AuthController {
   // }
 
   @Post('/signin')
+  @HttpCode(HttpStatus.OK)
   async signIn(@Body() signIn: SignIn) {
     return await this.authService.signIn(signIn);
   }
 
   @Put('/change-password/:id')
+  @HttpCode(HttpStatus.OK)
   async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.authService.changePassword(clientDto, id);
   }
 
   @Post('/admin-signin')
+  @HttpCode(HttpStatus.OK)
   async adminSignIn(@Body() signIn: SignIn) {
     return await this.authService.signIn(signIn);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Get('/me')
+  @HttpCode(HttpStatus.OK)
   getMe(@Request() req) {
     return req.user;
   }

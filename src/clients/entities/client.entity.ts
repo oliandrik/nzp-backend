@@ -53,7 +53,7 @@ export class Client {
   rank: ClientRank.new;
 
   @Column({ type: 'enum', enum: ClientStatus })
-  status: ClientStatus.active;
+  status: ClientStatus;
 
   @Column({ nullable: true })
   avatar: string;
