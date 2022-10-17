@@ -39,7 +39,7 @@ export class ServicesController {
   @Get(':type')
   @HttpCode(HttpStatus.OK)
   async getType(@Param() type) {
-    return await this.servicesService.getType(type);
+    return await this.servicesService.getType(type.type);
   }
 
   //

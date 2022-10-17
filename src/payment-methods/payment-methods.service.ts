@@ -4,8 +4,6 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentMethod } from './entities/payment-method.entity';
 
-// import { IsAllowedForNewUser } from './interfaces/payment-method.interfaces';
-
 @Injectable()
 export class PaymentMethodsService {
   constructor(
@@ -39,7 +37,7 @@ export class PaymentMethodsService {
       method_name: body.method_name,
       minimal_payment: body.minimal_payment,
       maximal_payment: body.maximal_payment,
-      is_allowed_for_new_users: body.is_allowed_for_new_users || true,
+      is_allowed_for_new_users: body.is_allowed_for_new_users,
       instruction: body.instruction,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -57,7 +55,7 @@ export class PaymentMethodsService {
           method_name: body.method_name,
           minimal_payment: body.minimal_payment,
           maximal_payment: body.maximal_payment,
-          is_allowed_for_new_users: body.is_allowed_for_new_users || true,
+          is_allowed_for_new_users: body.is_allowed_for_new_users,
           instruction: body.instruction,
           updatedAt: new Date(),
         })

@@ -1,52 +1,18 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
-export enum ModeService {
-  auto = 'auto',
-  manual = 'manual',
-}
-
-export enum DripFeedService {
-  allowed = 'allowed',
-  disallowed = 'disallowed',
-}
-
-export enum CancelService {
-  allowed = 'allowed',
-  disallowed = 'disallowed',
-}
-
-export enum LinkDuplicateService {
-  accept = 'accept',
-  deny = 'deny',
-}
-
-export enum StatusService {
-  enabled = 'enabled',
-  disabled = 'disabled',
-}
-
-export enum TypeService {
-  default = 'default',
-  package = 'package',
-  custom_comments = 'custom comments',
-  custom_comments_package = 'custom comments package',
-  subscription_reselling = 'subscription reselling',
-  comment_likes = 'comment likes',
-  mentions_user_followers = 'mentions user followers',
-  mentions_media_likers = 'mentions media likers',
-  invites_from_groups = 'invites from groups',
-  subscription = 'subscription',
-  mentions_custom_list = 'mentions custom list',
-  mentions_with_hashtags = 'mentions with hashtags',
-  mentions_hastag = 'mentions hastag',
-  poll = 'poll',
-  comment_replies = 'comment replies',
-}
+import {
+  ECancelService,
+  EDripFeedService,
+  ELinkDuplicateService,
+  EModeService,
+  EStatusService,
+  ETypeService,
+} from '../interfaces/service.interfaces';
 
 @Entity({ name: 'services' })
 export class Service {
   @PrimaryGeneratedColumn({ type: 'bigint' })
-  id: number;
+  id: bigint;
 
   @Column()
   service_name: string;
@@ -54,14 +20,14 @@ export class Service {
   @Column({ default: null })
   category: string;
 
-  @Column({ type: 'enum', enum: StatusService })
-  status: StatusService;
+  @Column({ type: 'enum', enum: EStatusService })
+  status: EStatusService;
 
-  @Column({ type: 'enum', enum: TypeService })
-  type: TypeService;
+  @Column({ type: 'enum', enum: ETypeService })
+  type: ETypeService;
 
-  @Column({ type: 'enum', enum: ModeService })
-  mode: ModeService;
+  @Column({ type: 'enum', enum: EModeService })
+  mode: EModeService;
 
   @Column({ default: null })
   provider: string;
@@ -69,11 +35,11 @@ export class Service {
   @Column({ default: null })
   service: string;
 
-  @Column({ type: 'enum', enum: DripFeedService })
-  drip_feed: DripFeedService;
+  @Column({ type: 'enum', enum: EDripFeedService })
+  drip_feed: EDripFeedService;
 
-  @Column({ type: 'enum', enum: CancelService })
-  cancel: CancelService;
+  @Column({ type: 'enum', enum: ECancelService })
+  cancel: ECancelService;
 
   @Column()
   rate_per: number;
@@ -84,8 +50,8 @@ export class Service {
   @Column()
   max_order: number;
 
-  @Column({ type: 'enum', enum: LinkDuplicateService })
-  link_duplicate: LinkDuplicateService;
+  @Column({ type: 'enum', enum: ELinkDuplicateService })
+  link_duplicate: ELinkDuplicateService;
 
   @Column()
   increment: number;

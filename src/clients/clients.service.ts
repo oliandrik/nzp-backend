@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
-import { EClientGender } from './interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
@@ -52,9 +51,9 @@ export class ClientsService {
     return await this.clientRepository
       .createQueryBuilder()
       .update()
-      // .set({
-      //   gender: EClientGender[data.gender],
-      // })
+      .set({
+        gender: data.gender,
+      })
       .where('id = :id', { id: id })
       .execute();
   }

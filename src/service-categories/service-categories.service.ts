@@ -9,10 +9,7 @@ import {
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceCategoryDto } from './dto/service-categories.dto';
 import { ServiceCategory } from './entities/service-categories.entity';
-import {
-  ECategoryPosition,
-  ECategoryStatus,
-} from './interfaces/service-categories.interfaces';
+import { ECategoryStatus } from './interfaces/service-categories.interfaces';
 
 @Injectable()
 export class ServiceCategoriesService {

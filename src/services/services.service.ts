@@ -1,17 +1,17 @@
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 
+import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceDto } from './dto/service.dto';
+import { Service } from './entities/service.entity';
 import {
-  CancelService,
-  DripFeedService,
-  LinkDuplicateService,
-  ModeService,
-  Service,
-  StatusService,
-  TypeService,
-} from './entities/service.entity';
+  ECancelService,
+  EDripFeedService,
+  ELinkDuplicateService,
+  EModeService,
+  EStatusService,
+} from './interfaces/service.interfaces';
 
 @Injectable()
 export class ServicesService {
@@ -40,19 +40,19 @@ export class ServicesService {
     const newServiceCategory = this.serviceRepository.create({
       service_name: service.service_name,
       category: service.category,
-      mode: ModeService[service.mode],
-      type: TypeService[service.type],
+      mode: service.mode,
+      type: service.type,
       provider: null,
       service: null,
-      cancel: CancelService[service.cancel],
-      drip_feed: DripFeedService[service.drip_feed],
+      cancel: service.cancel,
+      drip_feed: service.drip_feed,
       rate_per: service.rate_per,
       min_order: service.min_order,
       max_order: service.max_order,
-      link_duplicate: LinkDuplicateService[service.link_duplicate],
+      link_duplicate: service.link_duplicate,
       increment: service.increment,
       overflow: service.overflow,
-      status: StatusService.enabled,
+      status: EStatusService.ENABLED,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
@@ -66,7 +66,7 @@ export class ServicesService {
     const newServiceCategory = this.serviceRepository.create({
       ...foundService,
     });
-    console.log(newServiceCategory, 'newServiceCategory');
+
     return await (this.serviceRepository.save(newServiceCategory),
     { message: 'duplicated' });
   }
@@ -82,45 +82,35 @@ export class ServicesService {
 
   async bulkDelete(ids: []) {
     return await this.serviceRepository.delete(ids);
-    // return await this.serviceRepository.query(
-    //   `DELETE FROM services WHERE id IN (${ids})`,
-    // );
   }
 
   async getSelectedInfoProviders(providers: []) {
-    const query = await this.serviceRepository.query(
-      `SELECT * FROM services WHERE type IN (${providers})`,
-    );
-    return query;
-
-    //  return await dataSource.getRepository(Service).findBy({
-    //     type: In(${providers}),
-    // })
+    return await this.serviceRepository.findBy({
+      provider: In(providers),
+    });
   }
 
   // SORT
   async getEnableStatus() {
-    return await this.serviceRepository.query(
-      'SELECT * FROM services WHERE status = "enabled"',
-    );
+    return await this.serviceRepository.find({
+      where: { status: EStatusService.ENABLED },
+    });
   }
 
   async getDisableStatus() {
-    return await this.serviceRepository.query(
-      'SELECT * FROM services WHERE status = "disabled"',
-    );
+    return await this.serviceRepository.find({
+      where: { status: EStatusService.DISABLED },
+    });
   }
 
   async getType(param) {
-    return await this.serviceRepository.query(
-      `SELECT * FROM services WHERE type = "${TypeService[param.type]}"`,
-    );
+    return await this.serviceRepository.find({ where: { type: param } });
   }
 
   async getMany(types) {
-    return await this.serviceRepository.query(
-      `SELECT * FROM services WHERE type IN (${types})`,
-    );
+    return await this.serviceRepository.findBy({
+      type: In(types),
+    });
   }
 
   async updateService(id, service) {
@@ -132,19 +122,19 @@ export class ServicesService {
         .set({
           service_name: service.service_name,
           category: service.category,
-          mode: ModeService[service.mode],
-          type: TypeService[service.type],
+          mode: service.mode,
+          type: service.type,
           provider: null,
           service: null,
-          cancel: CancelService[service.cancel],
-          drip_feed: DripFeedService[service.drip_feed],
+          cancel: service.cancel,
+          drip_feed: service.drip_feed,
           rate_per: service.rate_per,
           min_order: service.min_order,
           max_order: service.max_order,
-          link_duplicate: LinkDuplicateService[service.link_duplicate],
+          link_duplicate: service.link_duplicate,
           increment: service.increment,
           overflow: service.overflow,
-          status: StatusService.enabled,
+          status: EStatusService.ENABLED,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })
@@ -161,7 +151,7 @@ export class ServicesService {
         .update()
         .set({
           ...foundService,
-          status: StatusService.disabled,
+          status: EStatusService.DISABLED,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })
@@ -178,7 +168,7 @@ export class ServicesService {
         .update()
         .set({
           ...foundService,
-          status: StatusService.enabled,
+          status: EStatusService.ENABLED,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })

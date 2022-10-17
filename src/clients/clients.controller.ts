@@ -21,6 +21,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientsService } from './clients.service';
 import { ClientDto } from './dto/client.dto';
+import { Client } from './entities/client.entity';
 
 @Controller('clients')
 export class ClientsController {
@@ -28,7 +29,7 @@ export class ClientsController {
 
   // only admin
   @Get()
-  async getClients() {
+  async getClients(): Promise<Client[]> {
     return await this.clientsService.getClients();
   }
 

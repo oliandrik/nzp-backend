@@ -1,27 +1,27 @@
 import {
-  CancelService,
-  DripFeedService,
-  LinkDuplicateService,
-  ModeService,
-  StatusService,
-  TypeService,
-} from '../entities/service.entity';
+  ECancelService,
+  EDripFeedService,
+  ELinkDuplicateService,
+  EModeService,
+  EStatusService,
+  ETypeService,
+} from '../interfaces/service.interfaces';
 
 export class ServiceDto {
   id: bigint;
   service_name: string;
   category: string;
-  mode: ModeService;
-  type: TypeService;
+  mode: EModeService;
+  type: ETypeService;
   provider: null;
   service: null;
-  drip_feed: DripFeedService;
-  cancel: CancelService;
+  drip_feed: EDripFeedService;
+  cancel: ECancelService;
   rate_per: number;
   min_order: number;
   max_order: number;
-  link_duplicate: LinkDuplicateService;
+  link_duplicate: ELinkDuplicateService;
   increment: number;
   overflow: number;
-  status: StatusService;
+  status: EStatusService;
 }

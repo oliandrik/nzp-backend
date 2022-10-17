@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { IsAllowedForNewUser } from '../interfaces/payment-method.interfaces';
+import { EIsAllowedForNewUser } from '../interfaces/payment-method.interfaces';
 
 @Entity({ name: 'payment_methods' })
 export class PaymentMethod {
@@ -16,8 +16,12 @@ export class PaymentMethod {
   @Column({ type: 'numeric', precision: 10, scale: 2, default: null })
   maximal_payment: number;
 
-  @Column({ type: 'bool' })
-  is_allowed_for_new_users: boolean;
+  @Column({
+    type: 'enum',
+    enum: EIsAllowedForNewUser,
+    default: EIsAllowedForNewUser.ALLOWED,
+  })
+  is_allowed_for_new_users: EIsAllowedForNewUser;
 
   @Column({ default: null })
   instruction: string;
