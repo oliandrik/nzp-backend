@@ -1,17 +1,10 @@
 import { Repository } from 'typeorm';
 
-import {
-  BadRequestException,
-  HttpException,
-  HttpStatus,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import {
-  AllowedForNewUser,
-  PaymentMethod,
-} from './entities/payment-method.entity';
+import { PaymentMethod } from './entities/payment-method.entity';
+
+// import { IsAllowedForNewUser } from './interfaces/payment-method.interfaces';
 
 @Injectable()
 export class PaymentMethodsService {
@@ -46,7 +39,7 @@ export class PaymentMethodsService {
       method_name: body.method_name,
       minimal_payment: body.minimal_payment,
       maximal_payment: body.maximal_payment,
-      new_users: AllowedForNewUser[body.new_users] || AllowedForNewUser.allowed,
+      is_allowed_for_new_users: body.is_allowed_for_new_users || true,
       instruction: body.instruction,
       createdAt: new Date(),
       updatedAt: new Date(),
@@ -64,8 +57,7 @@ export class PaymentMethodsService {
           method_name: body.method_name,
           minimal_payment: body.minimal_payment,
           maximal_payment: body.maximal_payment,
-          new_users:
-            AllowedForNewUser[body.new_users] || AllowedForNewUser.allowed,
+          is_allowed_for_new_users: body.is_allowed_for_new_users || true,
           instruction: body.instruction,
           updatedAt: new Date(),
         })
@@ -76,7 +68,6 @@ export class PaymentMethodsService {
   }
 
   async changeAccessibilityToNewUsers(id, param) {
-    console.log(id, param);
     await this.byId(id);
 
     return (
@@ -84,7 +75,7 @@ export class PaymentMethodsService {
         .createQueryBuilder()
         .update()
         .set({
-          new_users: AllowedForNewUser[param],
+          is_allowed_for_new_users: param,
           updatedAt: new Date(),
         })
         .where('id = :id', { id: id })

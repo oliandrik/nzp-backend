@@ -1,4 +1,4 @@
-import { ClientGender } from '../entities/client.entity';
+import { EClientGender } from '../interfaces/client.interfaces';
 
 export class ClientDto {
   id: bigint;
@@ -8,5 +8,5 @@ export class ClientDto {
   balance: number;
   spent: number;
   avatar: string;
-  gender: ClientGender;
+  gender: EClientGender;
 }

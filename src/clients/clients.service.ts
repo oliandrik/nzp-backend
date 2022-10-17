@@ -1,10 +1,10 @@
-import { ExportFile } from 'src/export-files/entities/file.entity';
+import { ExportFilesService } from 'src/export-files/export-files.service';
 import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ClientDto } from './dto/client.dto';
-import { Client, ClientGender } from './entities/client.entity';
+import { Client } from './entities/client.entity';
+import { EClientGender } from './interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
@@ -12,8 +12,7 @@ export class ClientsService {
     @InjectRepository(Client)
     private readonly clientRepository: Repository<Client>,
 
-    @InjectRepository(ExportFile)
-    private readonly exportFileRepository: Repository<ExportFile>,
+    private readonly exportFileService: ExportFilesService,
   ) {}
 
   async byEmail(data) {
@@ -41,16 +40,21 @@ export class ClientsService {
   }
 
   async getClients() {
-    return await this.clientRepository.query(`SELECT * FROM clients`);
+    return await this.clientRepository.find();
   }
 
-  async changeGender(data: ClientDto, id) {
+  // this. userRepository.update(
+  //   user.id ,
+  //   user
+  // );
+  async changeGender(data, id) {
+    // update without createQueryBuilder
     return await this.clientRepository
       .createQueryBuilder()
       .update()
-      .set({
-        gender: ClientGender[data.gender],
-      })
+      // .set({
+      //   gender: EClientGender[data.gender],
+      // })
       .where('id = :id', { id: id })
       .execute();
   }
@@ -94,42 +98,40 @@ export class ClientsService {
       fs.mkdirSync(dir);
     }
 
-    const res = await this.clientRepository.query(
-      `SELECT * FROM clients WHERE status = "${body.status}"`,
-    );
+    const res = await this.clientRepository.find({
+      where: { status: body.status },
+    });
+
     const writeStream = fs.createWriteStream(
       `${dir}/file_clients_${+new Date()}.${body.format}`,
     );
 
-    const newFile = await this.exportFileRepository.create({
+    const newFile = await this.exportFileService.getRepository().create({
       filename: `file_clients_${+new Date()}.${body.format}`,
       export_for: 'clients',
       createdAt: new Date(),
     });
 
-    writeStream.write(`${JSON.stringify(res)}`);
+    writeStream.write(`${JSON.stringify(res)}`); // json
+    // if(type === 'json') {
+    //   writeStream.write(`${JSON.stringify(res)}`); // json
+    // }else if {} else
     writeStream.end();
 
-    return await this.exportFileRepository.save(newFile);
+    return await this.exportFileService.getRepository().save(newFile);
   }
 
   // SORT
 
   async sortByASC(param) {
-    return await this.clientRepository.query(
-      `SELECT * FROM clients ORDER BY ${param} ASC`,
-    );
+    return await this.clientRepository.find({ order: { [param]: 'ASC' } });
   }
 
   async sortByDESC(param) {
-    return await this.clientRepository.query(
-      `SELECT * FROM clients ORDER BY ${param} DESC`,
-    );
+    return await this.clientRepository.find({ order: { [param]: 'DESC' } });
   }
 
-  async sortByStatus(param) {
-    return await this.clientRepository.query(
-      `SELECT * FROM clients WHERE status = '${param}'`,
-    );
+  async getByStatus(param) {
+    return await this.clientRepository.find({ where: { status: param } });
   }
 }

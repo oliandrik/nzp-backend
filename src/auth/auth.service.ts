@@ -1,10 +1,10 @@
 import * as bcrypt from 'bcrypt';
+import { Client } from 'src/clients/entities/client.entity';
 import {
-  Client,
-  ClientGender,
-  ClientRank,
-  ClientStatus,
-} from 'src/clients/entities/client.entity';
+  EClientGender,
+  EClientRank,
+  EClientStatus,
+} from 'src/clients/interfaces/client.interfaces';
 import { UserDto } from 'src/users/dto/user.dto';
 import { User, UserRole } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
@@ -59,10 +59,10 @@ export class AuthService {
       balance: 0.0,
       spent: 0.0,
       discount: 0.0,
-      rank: ClientRank.new,
-      status: ClientStatus.active,
+      rank: EClientRank.NEW,
+      status: EClientStatus.ACTIVE,
       avatar: null,
-      gender: ClientGender.other,
+      gender: EClientGender.OTHER,
       createdAt: new Date(),
       lastAuth: new Date(),
     });

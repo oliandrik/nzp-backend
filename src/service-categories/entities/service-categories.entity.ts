@@ -1,21 +1,9 @@
-import { Service } from 'src/services/entities/service.entity';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+
 import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToMany,
-} from 'typeorm';
-
-export enum CategoryPosition {
-  top = 'top',
-  bottom = 'bottom',
-}
-
-export enum CategoryStatus {
-  enabled = 'enabled',
-  disabled = 'disabled',
-}
+  ECategoryPosition,
+  ECategoryStatus,
+} from '../interfaces/service-categories.interfaces';
 
 @Entity({ name: 'service_categories' })
 export class ServiceCategory {
@@ -25,14 +13,22 @@ export class ServiceCategory {
   @Column({ unique: true })
   category_name: string;
 
-  @Column({ type: 'enum', enum: CategoryPosition })
-  position: CategoryPosition;
+  @Column({
+    type: 'enum',
+    enum: ECategoryPosition,
+    // default: ECategoryPosition.TOP,
+  })
+  position: ECategoryPosition;
 
-  @Column({ type: 'enum', enum: CategoryStatus })
-  status: CategoryStatus;
+  @Column({
+    type: 'enum',
+    enum: ECategoryStatus,
+    // default: ECategoryStatus.ENABLED,
+  })
+  status: ECategoryStatus;
 
   @Column({ default: null })
-  icon: string;
+  icon: null | string;
 
   @Column()
   createdAt: Date;

@@ -35,14 +35,12 @@ export class ClientsController {
   //clients
   @UseGuards(AuthGuard('jwt'))
   @Put('/change-gender/:id')
-  @HttpCode(HttpStatus.OK)
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.clientsService.changeGender(clientDto, id);
   }
 
   @UseGuards(AuthGuard('jwt'))
   @Put(':id/change-avatar')
-  @HttpCode(HttpStatus.OK)
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -86,21 +84,18 @@ export class ClientsController {
 
   // only admin
   @Get('asc/:param')
-  @HttpCode(HttpStatus.OK)
   async getClientsInfoByASC(@Param() param) {
     return await this.clientsService.sortByASC(param.param);
   }
 
   @Get('desc/:param')
-  @HttpCode(HttpStatus.OK)
   async getClientsInfoByDESC(@Param() param) {
     return await this.clientsService.sortByDESC(param.param);
   }
 
   @Get('status/:param')
-  @HttpCode(HttpStatus.OK)
   async getClientsByStatus(@Param() param) {
-    return await this.clientsService.sortByStatus(param.param);
+    return await this.clientsService.getByStatus(param.param);
   }
 
   @Post('files')

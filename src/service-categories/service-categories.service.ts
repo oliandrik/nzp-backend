@@ -8,11 +8,11 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ServiceCategoryDto } from './dto/service-categories.dto';
+import { ServiceCategory } from './entities/service-categories.entity';
 import {
-  CategoryPosition,
-  CategoryStatus,
-  ServiceCategory,
-} from './entities/service-categories.entity';
+  ECategoryPosition,
+  ECategoryStatus,
+} from './interfaces/service-categories.interfaces';
 
 @Injectable()
 export class ServiceCategoriesService {
@@ -54,16 +54,14 @@ export class ServiceCategoriesService {
   async createServiceCategory(category: ServiceCategoryDto, icon) {
     await this.byName(category.category_name);
 
-    const newServiceCategory = this.serviceCategoryRepository.create({
+    return await this.serviceCategoryRepository.insert({
       category_name: category.category_name,
-      position: CategoryPosition[category.position],
-      status: CategoryStatus.enabled,
-      icon: icon.filename,
+      position: category.position,
+      status: ECategoryStatus.ENABLED,
+      icon: icon,
       createdAt: new Date(),
       updatedAt: new Date(),
     });
-
-    return await this.serviceCategoryRepository.save(newServiceCategory);
   }
 
   async updateServiceCategory(id, updInfo: ServiceCategoryDto) {

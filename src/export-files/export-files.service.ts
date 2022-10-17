@@ -11,8 +11,12 @@ export class ExportFilesService {
     private readonly exportFileRepository: Repository<ExportFile>,
   ) {}
 
+  getRepository() {
+    return this.exportFileRepository;
+  }
+
   async getAllFiles() {
-    return await this.exportFileRepository.query(`SELECT * FROM export_files`);
+    return await this.exportFileRepository.find();
   }
 
   async getByClients() {
@@ -25,5 +29,9 @@ export class ExportFilesService {
     return await this.exportFileRepository.query(
       `SELECT * FROM export_files WHERE export_for = "orders"`,
     );
+  }
+
+  async deleteFile(id) {
+    return await this.exportFileRepository.delete(id);
   }
 }

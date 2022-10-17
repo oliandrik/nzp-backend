@@ -1,11 +1,4 @@
-import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  ManyToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum ModeService {
   auto = 'auto',

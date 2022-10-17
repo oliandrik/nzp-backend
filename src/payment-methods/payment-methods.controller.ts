@@ -39,7 +39,7 @@ export class PaymentMethodsController {
   async changeAccessibilityToNewUsers(@Param('id') id, @Body() body) {
     return await this.paymentMethodsService.changeAccessibilityToNewUsers(
       id,
-      body.new_users,
+      body.is_allowed_for_new_users,
     );
   }
 

@@ -17,6 +17,7 @@ import {
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ServiceCategoryDto } from './dto/service-categories.dto';
+import { ServiceCategory } from './entities/service-categories.entity';
 
 import { ServiceCategoriesService } from './service-categories.service';
 
@@ -28,7 +29,7 @@ export class ServiceCategoriesController {
 
   // @UseGuards(AuthGuard('jwt'))
   @Get()
-  async getAllServiceCategories() {
+  async getAllServiceCategories(): Promise<ServiceCategory[]> {
     return await this.serviceCategoriesService.getAllServiceCategories();
   }
 
@@ -57,9 +58,16 @@ export class ServiceCategoriesController {
     @Body() category: ServiceCategoryDto,
     @UploadedFile() icon: Express.Multer.File,
   ) {
+    let checkIcon;
+
+    if (icon == undefined) {
+      checkIcon = null;
+    } else {
+      checkIcon = icon.filename;
+    }
     return await this.serviceCategoriesService.createServiceCategory(
       category,
-      icon,
+      checkIcon,
     );
   }
 

@@ -1,5 +1,3 @@
-import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
-
 import {
   CancelService,
   DripFeedService,

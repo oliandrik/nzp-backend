@@ -1,4 +1,4 @@
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -36,6 +36,7 @@ export class ServicesService {
   }
 
   async createService(service: ServiceDto) {
+    // INSERT
     const newServiceCategory = this.serviceRepository.create({
       service_name: service.service_name,
       category: service.category,
@@ -80,9 +81,10 @@ export class ServicesService {
   }
 
   async bulkDelete(ids: []) {
-    return await this.serviceRepository.query(
-      `DELETE FROM services WHERE id IN (${ids})`,
-    );
+    return await this.serviceRepository.delete(ids);
+    // return await this.serviceRepository.query(
+    //   `DELETE FROM services WHERE id IN (${ids})`,
+    // );
   }
 
   async getSelectedInfoProviders(providers: []) {
@@ -90,6 +92,10 @@ export class ServicesService {
       `SELECT * FROM services WHERE type IN (${providers})`,
     );
     return query;
+
+    //  return await dataSource.getRepository(Service).findBy({
+    //     type: In(${providers}),
+    // })
   }
 
   // SORT
