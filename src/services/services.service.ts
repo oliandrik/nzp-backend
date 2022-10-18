@@ -38,23 +38,48 @@ export class ServicesService {
   async createService(service: ServiceDto) {
     // INSERT
     const newServiceCategory = this.serviceRepository.create({
-      service_name: service.service_name,
-      category: service.category,
-      mode: service.mode,
-      type: service.type,
-      provider: null,
-      service: null,
-      cancel: service.cancel,
-      drip_feed: service.drip_feed,
-      rate_per: service.rate_per,
-      min_order: service.min_order,
-      max_order: service.max_order,
-      link_duplicate: service.link_duplicate,
-      increment: service.increment,
-      overflow: service.overflow,
-      status: EStatusService.ENABLED,
+      // service_name: service.service_name,
+      // category: service.category,
+      // mode: service.mode,
+      // type: service.type,
+      // provider: null,
+      // service: null,
+      // cancel: service.cancel,
+      // drip_feed: service.drip_feed,
+      // rate_per: service.rate_per,
+      // min_order: service.min_order,
+      // max_order: service.max_order,
+      // link_duplicate: service.link_duplicate,
+      // increment: service.increment,
+      // overflow: service.overflow,
+      // status: EStatusService.ENABLED,
       createdAt: new Date(),
       updatedAt: new Date(),
+      service_name: faker.internet.userAgent(),
+      category: faker.company.catchPhraseAdjective(),
+      mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
+      type: Math.floor(Math.random() * 10),
+      provider: null,
+      service: null,
+      drip_feed:
+        Math.random() < 0.5
+          ? EDripFeedService.ALLOWED
+          : EDripFeedService.DISALLOWED,
+      cancel:
+        Math.random() < 0.5
+          ? ECancelService.ALLOWED
+          : ECancelService.DISALLOWED,
+      rate_per: faker.internet.httpStatusCode(),
+      min_order: faker.datatype.number({ min: 40 }),
+      max_order: faker.datatype.number({ min: 900 }),
+      link_duplicate:
+        Math.random() < 0.5
+          ? ELinkDuplicateService.ACCEPT
+          : ELinkDuplicateService.DENY,
+      increment: Math.random() * 10,
+      overflow: Math.random() * 10,
+      status:
+        Math.random() < 0.5 ? EStatusService.ENABLED : EStatusService.DISABLED,
     });
     return await (this.serviceRepository.save(newServiceCategory),
     { message: 'created' });

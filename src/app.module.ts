@@ -8,6 +8,8 @@ import { ClientsModule } from './clients/clients.module';
 import { Client } from './clients/entities/client.entity';
 import { ExportFile } from './export-files/entities/file.entity';
 import { ExportFilesModule } from './export-files/export-files.module';
+import { Order } from './orders/entities/order.entity';
+import { OrdersModule } from './orders/orders.module';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { User } from './users/entities/user.entity';
@@ -37,6 +39,7 @@ import { ServicesModule } from './services/services.module';
         Service,
         PaymentMethod,
         ExportFile,
+        Order,
       ],
       synchronize: true,
     }),
@@ -47,6 +50,7 @@ import { ServicesModule } from './services/services.module';
     ServiceCategoriesModule,
     PaymentMethodsModule,
     ExportFilesModule,
+    OrdersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
