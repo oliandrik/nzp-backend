@@ -4,6 +4,8 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { BonusesModule } from './bonuses/bonuses.module';
+import { Bonus } from './bonuses/entities/bonus.entity';
 import { ClientsModule } from './clients/clients.module';
 import { Client } from './clients/entities/client.entity';
 import { ExportFile } from './export-files/entities/file.entity';
@@ -43,6 +45,7 @@ import { ServicesModule } from './services/services.module';
         ExportFile,
         Order,
         GeneralSetting,
+        Bonus,
       ],
       synchronize: true,
     }),
@@ -55,6 +58,7 @@ import { ServicesModule } from './services/services.module';
     ExportFilesModule,
     OrdersModule,
     GeneralSettingsModule,
+    BonusesModule,
   ],
   controllers: [AppController],
   providers: [AppService],

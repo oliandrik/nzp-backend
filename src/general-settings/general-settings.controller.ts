@@ -1,4 +1,4 @@
-import { Body, Controller, Param, Put } from '@nestjs/common';
+import { Body, Controller, Param, Post, Put } from '@nestjs/common';
 import { GeneralSettingDto } from './dto/general-setting.dto';
 import { GeneralSettingsService } from './general-settings.service';
 
@@ -7,6 +7,11 @@ export class GeneralSettingsController {
   constructor(
     private readonly generalSettingsService: GeneralSettingsService,
   ) {}
+
+  @Post()
+  async createSettings(@Body() body: GeneralSettingDto) {
+    return await this.generalSettingsService.createSettings(body);
+  }
 
   @Put(':id')
   async saveChages(@Param('id') id: number, @Body() body: GeneralSettingDto) {
