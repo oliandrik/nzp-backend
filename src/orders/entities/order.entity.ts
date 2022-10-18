@@ -32,5 +32,5 @@ export class Order {
   remains: number;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
 }

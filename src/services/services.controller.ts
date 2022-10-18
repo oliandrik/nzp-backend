@@ -74,13 +74,13 @@ export class ServicesController {
     return await this.servicesService.updateService(id, service);
   }
 
-  @Put('disabled/:id')
+  @Put(':id/disabled')
   @HttpCode(HttpStatus.OK)
   async makeDisableService(@Param('id') id) {
     return await this.servicesService.makeDisableService(id);
   }
 
-  @Put('enabled/:id')
+  @Put(':id/enabled/')
   @HttpCode(HttpStatus.OK)
   async makeEnableService(@Param('id') id) {
     return await this.servicesService.makeEnableService(id);

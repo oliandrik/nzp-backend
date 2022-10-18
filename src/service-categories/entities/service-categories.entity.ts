@@ -31,10 +31,10 @@ export class ServiceCategory {
   icon: null | string;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
 
   @Column()
-  updatedAt: Date;
+  updated_at: Date;
 
   // (1 service categories can have many services)
 

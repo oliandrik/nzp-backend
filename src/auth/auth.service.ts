@@ -63,7 +63,8 @@ export class AuthService {
       status: EClientStatus.ACTIVE,
       avatar: null,
       gender: EClientGender.OTHER,
-      createdAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
       lastAuth: new Date(),
     });
 

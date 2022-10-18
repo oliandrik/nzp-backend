@@ -27,8 +27,8 @@ export class PaymentMethod {
   instruction: string;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
 
   @Column()
-  updatedAt: Date;
+  updated_at: Date;
 }

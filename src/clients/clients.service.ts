@@ -42,20 +42,11 @@ export class ClientsService {
     return await this.clientRepository.find();
   }
 
-  // this. userRepository.update(
-  //   user.id ,
-  //   user
-  // );
   async changeGender(data, id) {
-    // update without createQueryBuilder
-    return await this.clientRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        gender: data.gender,
-      })
-      .where('id = :id', { id: id })
-      .execute();
+    return await this.clientRepository.update(
+      { id },
+      { gender: data.gender, updated_at: new Date() },
+    );
   }
 
   async changeAvatar(avatar, id) {
@@ -75,16 +66,10 @@ export class ClientsService {
       delete findUser.avatar;
     }
 
-    const upd = await this.clientRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        avatar: avatar.avatar,
-      })
-      .where('id = :id', { id: id.id })
-      .execute();
-
-    return upd;
+    return await this.clientRepository.update(
+      { id },
+      { avatar: avatar.avatar, updated_at: new Date() },
+    );
   }
 
   async exportClientsFile(body) {
@@ -108,7 +93,7 @@ export class ClientsService {
     const newFile = await this.exportFileService.getRepository().create({
       filename: `file_clients_${+new Date()}.${body.format}`,
       export_for: 'clients',
-      createdAt: new Date(),
+      created_at: new Date(),
     });
 
     writeStream.write(`${JSON.stringify(res)}`); // json

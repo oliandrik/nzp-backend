@@ -45,7 +45,10 @@ export class Client {
   gender: EClientGender;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
+
+  @Column()
+  updated_at: Date;
 
   @Column()
   lastAuth: null | Date;

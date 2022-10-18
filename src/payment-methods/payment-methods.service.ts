@@ -39,45 +39,48 @@ export class PaymentMethodsService {
       maximal_payment: body.maximal_payment,
       is_allowed_for_new_users: body.is_allowed_for_new_users,
       instruction: body.instruction,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
     return await this.paymentMethodRepository.save(newPaymentMethod);
   }
 
   async updateService(id, body) {
     await this.byId(id);
+
     return (
-      await this.paymentMethodRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          method_name: body.method_name,
-          minimal_payment: body.minimal_payment,
-          maximal_payment: body.maximal_payment,
-          is_allowed_for_new_users: body.is_allowed_for_new_users,
-          instruction: body.instruction,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+      await this.paymentMethodRepository.update(
+        { id },
+        { ...body, updated_at: new Date() },
+      ),
       { message: 'Payment method was updated' }
     );
+    // return (
+    //   await this.paymentMethodRepository
+    //     .createQueryBuilder()
+    //     .update()
+    //     .set({
+    //       method_name: body.method_name,
+    //       minimal_payment: body.minimal_payment,
+    //       maximal_payment: body.maximal_payment,
+    //       is_allowed_for_new_users: body.is_allowed_for_new_users,
+    //       instruction: body.instruction,
+    //       updated_at: new Date(),
+    //     })
+    //     .where('id = :id', { id: id })
+    //     .execute(),
+    //   { message: 'Payment method was updated' }
+    // );
   }
 
   async changeAccessibilityToNewUsers(id, param) {
     await this.byId(id);
 
     return (
-      await this.paymentMethodRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          is_allowed_for_new_users: param,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+      await this.paymentMethodRepository.update(
+        { id },
+        { is_allowed_for_new_users: param, updated_at: new Date() },
+      ),
       { message: 'Payment method for new users was updated' }
     );
   }

@@ -23,7 +23,7 @@ export class OrdersService {
       service: faker.random.words(),
       status: Math.floor(Math.random() * (6 - 1 + 1) + 1),
       remains: faker.datatype.number(),
-      createdAt: new Date(),
+      created_at: new Date(),
     });
   }
 }

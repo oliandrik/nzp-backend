@@ -12,5 +12,5 @@ export class ExportFile {
   export_for: string;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
 }

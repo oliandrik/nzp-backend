@@ -56,26 +56,19 @@ export class ServiceCategoriesService {
       position: category.position,
       status: ECategoryStatus.ENABLED,
       icon: icon,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
     });
   }
 
-  async updateServiceCategory(id, updInfo: ServiceCategoryDto) {
+  async updateServiceCategory(id, updInfo) {
     await this.byId(id);
 
     return (
-      await this.serviceCategoryRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          category_name: updInfo.category_name,
-          position: updInfo.position,
-          status: updInfo.status,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+      await this.serviceCategoryRepository.update(
+        { id },
+        { ...updInfo, updated_at: new Date() },
+      ),
       { message: 'Service category was updated' }
     );
   }

@@ -34,8 +34,8 @@ export class ClientsController {
   }
 
   //clients
-  @UseGuards(AuthGuard('jwt'))
-  @Put('/change-gender/:id')
+  // @UseGuards(AuthGuard('jwt'))
+  @Put(':id/change-gender')
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.clientsService.changeGender(clientDto, id);
   }
@@ -62,7 +62,7 @@ export class ClientsController {
   )
   async changeAvatar(
     @UploadedFile() file: Express.Multer.File,
-    @Param() id: number,
+    @Param() id,
     @CurrentUser() user,
   ) {
     if (!file) {
@@ -73,7 +73,7 @@ export class ClientsController {
 
     return await this.clientsService.changeAvatar(
       { avatar: file.filename },
-      id,
+      id.id,
     );
   }
 

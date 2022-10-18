@@ -60,10 +60,10 @@ export class Service {
   overflow: number;
 
   @Column()
-  createdAt: Date;
+  created_at: Date;
 
   @Column()
-  updatedAt: Date;
+  updated_at: Date;
 
   // (1 service can have one service)
 

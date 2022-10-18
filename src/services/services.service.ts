@@ -53,8 +53,8 @@ export class ServicesService {
       // increment: service.increment,
       // overflow: service.overflow,
       // status: EStatusService.ENABLED,
-      createdAt: new Date(),
-      updatedAt: new Date(),
+      created_at: new Date(),
+      updated_at: new Date(),
       service_name: faker.internet.userAgent(),
       category: faker.company.catchPhraseAdjective(),
       mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
@@ -141,63 +141,42 @@ export class ServicesService {
   async updateService(id, service) {
     await this.byId(id);
     return (
-      await this.serviceRepository
-        .createQueryBuilder()
-        .update()
-        .set({
-          service_name: service.service_name,
-          category: service.category,
-          mode: service.mode,
-          type: service.type,
-          provider: null,
-          service: null,
-          cancel: service.cancel,
-          drip_feed: service.drip_feed,
-          rate_per: service.rate_per,
-          min_order: service.min_order,
-          max_order: service.max_order,
-          link_duplicate: service.link_duplicate,
-          increment: service.increment,
-          overflow: service.overflow,
-          status: EStatusService.ENABLED,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+      await this.serviceRepository.update(
+        { id },
+        { ...service, updated_at: new Date() },
+      ),
       { message: 'Service was updated' }
     );
   }
 
   async makeDisableService(id) {
     const foundService = await this.byId(id);
+
     return (
-      await this.serviceRepository
-        .createQueryBuilder()
-        .update()
-        .set({
+      await this.serviceRepository.update(
+        { id },
+        {
           ...foundService,
           status: EStatusService.DISABLED,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+          updated_at: new Date(),
+        },
+      ),
       { message: 'Status was changed' }
     );
   }
 
   async makeEnableService(id) {
     const foundService = await this.byId(id);
+
     return (
-      await this.serviceRepository
-        .createQueryBuilder()
-        .update()
-        .set({
+      await this.serviceRepository.update(
+        { id },
+        {
           ...foundService,
           status: EStatusService.ENABLED,
-          updatedAt: new Date(),
-        })
-        .where('id = :id', { id: id })
-        .execute(),
+          updated_at: new Date(),
+        },
+      ),
       { message: 'Status was changed' }
     );
   }
