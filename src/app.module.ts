@@ -6,6 +6,8 @@ import { AffiliateSystem } from './affiliate-system/entities/affiliate-system.en
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { AverageTimeModule } from './average-time/average-time.module';
+import { AverageTime } from './average-time/entities/average-time.entity';
 import { BonusesModule } from './bonuses/bonuses.module';
 import { Bonus } from './bonuses/entities/bonus.entity';
 import { ClientsModule } from './clients/clients.module';
@@ -50,6 +52,7 @@ import { ServicesModule } from './services/services.module';
         GeneralSetting,
         Bonus,
         AffiliateSystem,
+        AverageTime,
       ],
       synchronize: true,
     }),
@@ -65,6 +68,7 @@ import { ServicesModule } from './services/services.module';
     BonusesModule,
     AffiliateSystemModule,
     PaymentToClientModule,
+    AverageTimeModule,
   ],
   controllers: [AppController],
   providers: [AppService],
