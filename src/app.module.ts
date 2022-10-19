@@ -16,6 +16,8 @@ import { ExportFile } from './export-files/entities/file.entity';
 import { ExportFilesModule } from './export-files/export-files.module';
 import { GeneralSetting } from './general-settings/entities/general-settings.entity';
 import { GeneralSettingsModule } from './general-settings/general-settings.module';
+import { MultiCurrency } from './multi-currency/entities/multi-currency.entity';
+import { MultiCurrencyModule } from './multi-currency/multi-currency.module';
 import { Order } from './orders/entities/order.entity';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
@@ -53,6 +55,7 @@ import { ServicesModule } from './services/services.module';
         Bonus,
         AffiliateSystem,
         AverageTime,
+        MultiCurrency,
       ],
       synchronize: true,
     }),
@@ -69,6 +72,7 @@ import { ServicesModule } from './services/services.module';
     AffiliateSystemModule,
     PaymentToClientModule,
     AverageTimeModule,
+    MultiCurrencyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
