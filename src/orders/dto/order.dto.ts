@@ -1,14 +1,16 @@
-import { EOrderStatus } from '../interfaces/order.interfaces';
+import { Client } from 'src/clients/entities/client.entity';
+
+import { EOrderMode, EOrderStatus } from '../interfaces/order.interfaces';
 
 export class OrderDto {
   id: number;
-  client: string; //change it
+  client: Client;
   charge: number;
   link: string;
   start_count: number;
   quantity: number;
-  service: string; //change it
+  service: EOrderMode;
   status: EOrderStatus;
   remains: number;
-  created_at: Date;
+  mode: EOrderMode;
 }

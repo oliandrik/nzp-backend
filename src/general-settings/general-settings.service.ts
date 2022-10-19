@@ -52,7 +52,6 @@ export class GeneralSettingsService {
   }
 
   async saveChages(id, body) {
-    console.log(body);
     return await this.generalSettingRepository.update(
       { id },
       { ...body, updated_at: new Date() },

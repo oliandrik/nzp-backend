@@ -4,7 +4,6 @@ import { In, Repository } from 'typeorm';
 import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ServiceDto } from './dto/service.dto';
 import { Service } from './entities/service.entity';
 import {
   ECancelService,
@@ -21,6 +20,12 @@ export class ServicesService {
     private readonly serviceRepository: Repository<Service>,
   ) {}
 
+  async findAll() {
+    return await this.serviceRepository.find({
+      loadRelationIds: true,
+    });
+  }
+
   async byId(id) {
     const categoryId = await this.serviceRepository.findOne({
       where: { id: id },
@@ -36,28 +41,15 @@ export class ServicesService {
     return categoryId;
   }
 
-  async createService(service: ServiceDto) {
+  async createService(body) {
     // INSERT
     const newServiceCategory = this.serviceRepository.create({
-      // service_name: service.service_name,
-      // category: service.category,
-      // mode: service.mode,
-      // type: service.type,
-      // provider: null,
-      // service: null,
-      // cancel: service.cancel,
-      // drip_feed: service.drip_feed,
-      // rate_per: service.rate_per,
-      // min_order: service.min_order,
-      // max_order: service.max_order,
-      // link_duplicate: service.link_duplicate,
-      // increment: service.increment,
-      // overflow: service.overflow,
+      // ...body,
       // status: EStatusService.ENABLED,
       created_at: new Date(),
       updated_at: new Date(),
       service_name: faker.internet.userAgent(),
-      // category:
+      category: { id: body.categoryId } as ServiceCategory,
       mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
       type: Math.floor(Math.random() * 10),
       provider: null,

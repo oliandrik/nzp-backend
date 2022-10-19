@@ -1,5 +1,6 @@
 import { Repository } from 'typeorm';
 
+import { faker } from '@faker-js/faker';
 import {
   BadRequestException,
   HttpException,
@@ -49,12 +50,15 @@ export class ServiceCategoriesService {
   }
 
   async createServiceCategory(category: ServiceCategoryDto, icon) {
-    await this.byName(category.category_name);
+    await this.byName(faker.internet.color());
 
     return await this.serviceCategoryRepository.insert({
-      category_name: category.category_name,
+      category_name: faker.internet.color(),
       position: category.position,
-      status: ECategoryStatus.ENABLED,
+      status:
+        Math.random() < 0.5
+          ? ECategoryStatus.ENABLED
+          : ECategoryStatus.DISABLED,
       icon: icon,
       created_at: new Date(),
       updated_at: new Date(),

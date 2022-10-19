@@ -1,3 +1,5 @@
+import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
+
 import {
   ECancelService,
   EDripFeedService,
@@ -10,7 +12,7 @@ import {
 export class ServiceDto {
   id: bigint;
   service_name: string;
-  category: string;
+  category: ServiceCategory;
   mode: EModeService;
   type: ETypeService;
   provider: null;

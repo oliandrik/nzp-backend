@@ -18,12 +18,7 @@ export class Service {
   @Column()
   service_name: string;
 
-  // (1 service can have one service)
-
-  @ManyToOne(
-    () => ServiceCategory,
-    (serviceCategory) => serviceCategory.services,
-  )
+  @ManyToOne(() => ServiceCategory)
   category: ServiceCategory;
 
   @Column({ type: 'enum', enum: EStatusService })

@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
-import { EOrderStatus } from '../interfaces/order.interfaces';
+import { EOrderMode, EOrderStatus } from '../interfaces/order.interfaces';
 
 @Entity({ name: 'orders' })
 @Index(['client', 'service'])
@@ -44,8 +44,11 @@ export class Order {
 
   @Column()
   @Index()
-  mode: number;
+  mode: EOrderMode;
 
   @Column()
   created_at: Date;
+
+  @Column()
+  updated_at: Date;
 }
