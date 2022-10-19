@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import {
   ECancelService,
@@ -17,8 +18,13 @@ export class Service {
   @Column()
   service_name: string;
 
-  @Column({ default: null })
-  category: string;
+  // (1 service can have one service)
+
+  @ManyToOne(
+    () => ServiceCategory,
+    (serviceCategory) => serviceCategory.services,
+  )
+  category: ServiceCategory;
 
   @Column({ type: 'enum', enum: EStatusService })
   status: EStatusService;
@@ -64,12 +70,4 @@ export class Service {
 
   @Column()
   updated_at: Date;
-
-  // (1 service can have one service)
-
-  // @ManyToOne(
-  //   () => ServiceCategory,
-  //   (serviceCategory) => serviceCategory.services,
-  // )
-  // category: ServiceCategory;
 }

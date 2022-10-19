@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { Service } from 'src/services/entities/service.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
 
 import {
   ECategoryPosition,
@@ -16,14 +17,12 @@ export class ServiceCategory {
   @Column({
     type: 'enum',
     enum: ECategoryPosition,
-    // default: ECategoryPosition.TOP,
   })
   position: ECategoryPosition;
 
   @Column({
     type: 'enum',
     enum: ECategoryStatus,
-    // default: ECategoryStatus.ENABLED,
   })
   status: ECategoryStatus;
 
@@ -36,8 +35,6 @@ export class ServiceCategory {
   @Column()
   updated_at: Date;
 
-  // (1 service categories can have many services)
-
-  // @OneToMany(() => Service, (service) => service.category, { cascade: true })
-  // services: Service[];
+  @OneToMany(() => Service, (service) => service.category)
+  services: Service[];
 }

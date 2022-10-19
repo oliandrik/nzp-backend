@@ -1,3 +1,4 @@
+import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { In, Repository } from 'typeorm';
 
 import { faker } from '@faker-js/faker';
@@ -56,7 +57,7 @@ export class ServicesService {
       created_at: new Date(),
       updated_at: new Date(),
       service_name: faker.internet.userAgent(),
-      category: faker.company.catchPhraseAdjective(),
+      // category:
       mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
       type: Math.floor(Math.random() * 10),
       provider: null,

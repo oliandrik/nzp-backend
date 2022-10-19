@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { AffiliateSystemModule } from './affiliate-system/affiliate-system.module';
+import { AffiliateSystem } from './affiliate-system/entities/affiliate-system.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -16,6 +18,7 @@ import { Order } from './orders/entities/order.entity';
 import { OrdersModule } from './orders/orders.module';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
+import { PaymentToClientModule } from './payment-to-client/payment-to-client.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
@@ -46,6 +49,7 @@ import { ServicesModule } from './services/services.module';
         Order,
         GeneralSetting,
         Bonus,
+        AffiliateSystem,
       ],
       synchronize: true,
     }),
@@ -59,6 +63,8 @@ import { ServicesModule } from './services/services.module';
     OrdersModule,
     GeneralSettingsModule,
     BonusesModule,
+    AffiliateSystemModule,
+    PaymentToClientModule,
   ],
   controllers: [AppController],
   providers: [AppService],
