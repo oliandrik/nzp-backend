@@ -23,6 +23,8 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { PaymentToClientModule } from './payment-to-client/payment-to-client.module';
+import { Provider } from './providers/entities/provider.entity';
+import { ProvidersModule } from './providers/providers.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
@@ -56,6 +58,7 @@ import { ServicesModule } from './services/services.module';
         AffiliateSystem,
         AverageTime,
         MultiCurrency,
+        Provider,
       ],
       synchronize: true,
     }),
@@ -73,6 +76,7 @@ import { ServicesModule } from './services/services.module';
     PaymentToClientModule,
     AverageTimeModule,
     MultiCurrencyModule,
+    ProvidersModule,
   ],
   controllers: [AppController],
   providers: [AppService],
