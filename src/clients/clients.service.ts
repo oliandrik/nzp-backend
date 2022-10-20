@@ -1,5 +1,6 @@
 import { ExportFilesService } from 'src/export-files/export-files.service';
-import { Repository } from 'typeorm';
+import { Between, In, Repository } from 'typeorm';
+import { json2xml } from 'xml-js';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -75,6 +76,8 @@ export class ClientsService {
   async exportClientsFile(body) {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const csvjson = require('csvjson');
 
     const dir = './src/fileToExport';
 
@@ -83,7 +86,10 @@ export class ClientsService {
     }
 
     const res = await this.clientRepository.find({
-      where: { status: body.status },
+      where: {
+        status: In(body.status),
+        created_at: Between(body.from, body.to),
+      },
     });
 
     const writeStream = fs.createWriteStream(
@@ -96,10 +102,20 @@ export class ClientsService {
       created_at: new Date(),
     });
 
-    writeStream.write(`${JSON.stringify(res)}`); // json
-    // if(type === 'json') {
-    //   writeStream.write(`${JSON.stringify(res)}`); // json
-    // }else if {} else
+    if (body.format === 'csv') {
+      writeStream.write(
+        csvjson.toCSV(res, {
+          headers: 'key',
+        }),
+      );
+    } else if (body.format === 'xml') {
+      writeStream.write(
+        json2xml(JSON.stringify(res), { compact: true, spaces: 4 }),
+      );
+    } else {
+      writeStream.write(`${JSON.stringify(res)}`);
+    }
+
     writeStream.end();
 
     return await this.exportFileService.getRepository().save(newFile);
