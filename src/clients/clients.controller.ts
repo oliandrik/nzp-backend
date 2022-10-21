@@ -78,7 +78,6 @@ export class ClientsController {
   }
 
   @Get('/avatar/:avatar')
-  @HttpCode(HttpStatus.OK)
   async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
     res.sendFile(avatar, { root: './uploads/avatars' });
   }
