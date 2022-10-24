@@ -44,6 +44,8 @@ export class ClientsService {
   }
 
   async changeGender(data, id) {
+    await this.byId(id);
+
     return await this.clientRepository.update(
       { id },
       { gender: data.gender, updated_at: new Date() },
@@ -102,18 +104,21 @@ export class ClientsService {
       created_at: new Date(),
     });
 
-    if (body.format === 'csv') {
-      writeStream.write(
-        csvjson.toCSV(res, {
-          headers: 'key',
-        }),
-      );
-    } else if (body.format === 'xml') {
-      writeStream.write(
-        json2xml(JSON.stringify(res), { compact: true, spaces: 4 }),
-      );
-    } else {
-      writeStream.write(`${JSON.stringify(res)}`);
+    switch (body.format) {
+      case 'csv':
+        writeStream.write(
+          csvjson.toCSV(res, {
+            headers: 'key',
+          }),
+        );
+        break;
+      case 'xml':
+        writeStream.write(
+          json2xml(JSON.stringify(res), { compact: true, spaces: 4 }),
+        );
+      default:
+        writeStream.write(`${JSON.stringify(res)}`);
+        break;
     }
 
     writeStream.end();

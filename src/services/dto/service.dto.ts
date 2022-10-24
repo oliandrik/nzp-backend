@@ -1,3 +1,4 @@
+import { Provider } from 'src/providers/entities/provider.entity';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 
 import {
@@ -15,8 +16,8 @@ export class ServiceDto {
   category: ServiceCategory;
   mode: EModeService;
   type: ETypeService;
-  provider: null;
-  service: null;
+  provider: Provider;
+  // provider_service: null;
   drip_feed: EDripFeedService;
   cancel: ECancelService;
   rate_per: number;

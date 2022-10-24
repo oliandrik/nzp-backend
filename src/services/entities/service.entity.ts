@@ -1,3 +1,4 @@
+import { Provider } from 'src/providers/entities/provider.entity';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
@@ -30,11 +31,11 @@ export class Service {
   @Column({ type: 'enum', enum: EModeService })
   mode: EModeService;
 
-  @Column({ default: null })
-  provider: string;
+  @ManyToOne(() => Provider)
+  provider: Provider;
 
-  @Column({ default: null })
-  service: string;
+  // @Column()
+  // provider_service: null;
 
   @Column({ type: 'enum', enum: EDripFeedService })
   drip_feed: EDripFeedService;

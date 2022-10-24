@@ -1,3 +1,4 @@
+import { Provider } from 'src/providers/entities/provider.entity';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { In, Repository } from 'typeorm';
 
@@ -40,7 +41,6 @@ export class ServicesService {
 
     return categoryId;
   }
-
   async createService(body) {
     // INSERT
     const newServiceCategory = this.serviceRepository.create({
@@ -52,8 +52,8 @@ export class ServicesService {
       category: { id: body.categoryId } as ServiceCategory,
       mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
       type: Math.floor(Math.random() * 10),
-      provider: null,
-      service: null,
+      provider: { id: body.provider_id } as Provider,
+      // provider_service: null,
       drip_feed:
         Math.random() < 0.5
           ? EDripFeedService.ALLOWED
