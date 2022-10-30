@@ -55,22 +55,6 @@ export class PaymentMethodsService {
       ),
       { message: 'Payment method was updated' }
     );
-    // return (
-    //   await this.paymentMethodRepository
-    //     .createQueryBuilder()
-    //     .update()
-    //     .set({
-    //       method_name: body.method_name,
-    //       minimal_payment: body.minimal_payment,
-    //       maximal_payment: body.maximal_payment,
-    //       is_allowed_for_new_users: body.is_allowed_for_new_users,
-    //       instruction: body.instruction,
-    //       updated_at: new Date(),
-    //     })
-    //     .where('id = :id', { id: id })
-    //     .execute(),
-    //   { message: 'Payment method was updated' }
-    // );
   }
 
   async changeAccessibilityToNewUsers(id, param) {

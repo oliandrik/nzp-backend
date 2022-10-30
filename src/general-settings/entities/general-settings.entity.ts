@@ -55,10 +55,10 @@ export class GeneralSetting {
   @Column()
   minimum_dripfeed_interval: number;
 
-  @Column()
+  @Column({ type: 'text' })
   custom_header_code: string;
 
-  @Column()
+  @Column({ type: 'text' })
   custom_footer_code: string;
 
   @Column()

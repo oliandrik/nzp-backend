@@ -26,8 +26,23 @@ export class TicketsController {
     return await this.ticketsService.byId(query.id);
   }
 
-  @Get('search-by-subject/')
-  async searchBySubject(@Query() query) {
+  //
+
+  //   userRepository.find({
+  //     relations: {
+  //         project: true,
+  //     },
+  //     where: {
+  //         project: {
+  //             name: "TypeORM",
+  //             initials: "TORM",
+  //         },
+  //     },
+  // })
+
+  // create two types of searching
+  @Get('search-by-subject/:param')
+  async searchBySubject(@Param() param, @Query() query) {
     return await this.ticketsService.bySubject(query.subject);
   }
 

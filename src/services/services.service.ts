@@ -1,18 +1,9 @@
-import { Provider } from 'src/providers/entities/provider.entity';
-import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { In, Repository } from 'typeorm';
 
-import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Service } from './entities/service.entity';
-import {
-  ECancelService,
-  EDripFeedService,
-  ELinkDuplicateService,
-  EModeService,
-  EStatusService,
-} from './interfaces/service.interfaces';
+import { EStatusService } from './interfaces/service.interfaces';
 
 @Injectable()
 export class ServicesService {
@@ -24,6 +15,9 @@ export class ServicesService {
   async findAll() {
     return await this.serviceRepository.find({
       loadRelationIds: true,
+      relations: {
+        provider: true,
+      },
     });
   }
 
@@ -42,39 +36,11 @@ export class ServicesService {
     return categoryId;
   }
   async createService(body) {
-    // INSERT
-    const newServiceCategory = this.serviceRepository.create({
-      // ...body,
-      // status: EStatusService.ENABLED,
+    return await (this.serviceRepository.insert({
+      ...body,
       created_at: new Date(),
       updated_at: new Date(),
-      service_name: faker.internet.userAgent(),
-      category: { id: body.categoryId } as ServiceCategory,
-      mode: Math.random() < 0.5 ? EModeService.AUTO : EModeService.MANUAL,
-      type: Math.floor(Math.random() * 10),
-      provider: { id: body.provider_id } as Provider,
-      // provider_service: null,
-      drip_feed:
-        Math.random() < 0.5
-          ? EDripFeedService.ALLOWED
-          : EDripFeedService.DISALLOWED,
-      cancel:
-        Math.random() < 0.5
-          ? ECancelService.ALLOWED
-          : ECancelService.DISALLOWED,
-      rate_per: faker.internet.httpStatusCode(),
-      min_order: faker.datatype.number({ min: 40 }),
-      max_order: faker.datatype.number({ min: 900 }),
-      link_duplicate:
-        Math.random() < 0.5
-          ? ELinkDuplicateService.ACCEPT
-          : ELinkDuplicateService.DENY,
-      increment: Math.random() * 10,
-      overflow: Math.random() * 10,
-      status:
-        Math.random() < 0.5 ? EStatusService.ENABLED : EStatusService.DISABLED,
-    });
-    return await (this.serviceRepository.save(newServiceCategory),
+    }),
     { message: 'created' });
   }
 

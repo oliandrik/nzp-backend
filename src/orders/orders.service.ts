@@ -1,6 +1,8 @@
 import { Client } from 'src/clients/entities/client.entity';
+import { ExportFilesService } from 'src/export-files/export-files.service';
 import { Service } from 'src/services/entities/service.entity';
-import { Like, Repository } from 'typeorm';
+import { Between, In, Like, Repository } from 'typeorm';
+import { json2xml } from 'xml-js';
 
 import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -12,11 +14,25 @@ export class OrdersService {
   constructor(
     @InjectRepository(Order)
     private readonly orderRepository: Repository<Order>,
+    private readonly exportFileService: ExportFilesService,
   ) {}
 
   async findAll() {
     return await this.orderRepository.find({
-      loadRelationIds: true,
+      // loadRelationIds: true,
+      relations: {
+        client: true,
+        service: true,
+      },
+      select: {
+        client: {
+          username: true,
+        },
+        // service: {
+        //   id: true,
+
+        // }
+      },
     });
   }
 
@@ -98,5 +114,56 @@ export class OrdersService {
       await this.orderRepository.delete(ids),
       { message: 'Orders were successfully deleted' }
     );
+  }
+
+  async exportOrdersFile(body) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const fs = require('fs');
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const csvjson = require('csvjson');
+
+    const dir = './src/fileToExport';
+
+    if (!fs.existsSync(dir)) {
+      fs.mkdirSync(dir);
+    }
+
+    const res = await this.orderRepository.find({
+      where: {
+        status: In(body.status),
+        created_at: Between(body.from, body.to),
+      },
+    });
+
+    const writeStream = fs.createWriteStream(
+      `${dir}/file_clients_${+new Date()}.${body.format}`,
+    );
+
+    const newFile = await this.exportFileService.getRepository().create({
+      filename: `file_clients_${+new Date()}.${body.format}`,
+      export_for: 'clients',
+      created_at: new Date(),
+    });
+
+    switch (body.format) {
+      case 'csv':
+        writeStream.write(
+          csvjson.toCSV(res, {
+            headers: 'key',
+          }),
+        );
+        break;
+      case 'xml':
+        writeStream.write(
+          json2xml(JSON.stringify(res), { compact: true, spaces: 4 }),
+        );
+      default:
+        writeStream.write(`${JSON.stringify(res)}`);
+        break;
+    }
+
+    writeStream.end();
+
+    return await this.exportFileService.getRepository().save(newFile);
   }
 }

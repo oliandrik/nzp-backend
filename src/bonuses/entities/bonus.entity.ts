@@ -1,4 +1,5 @@
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
+import { PaymentMethod } from 'src/payment-methods/entities/payment-method.entity';
+import { Entity, Column, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 
 import { EBonusStatus } from '../interfaces/bonus.interfaces';
 
@@ -10,8 +11,8 @@ export class Bonus {
   @Column()
   bonus_amount: number;
 
-  @Column({ unique: true })
-  for_method: string; // relation payment methods
+  @OneToOne(() => PaymentMethod)
+  for_method: PaymentMethod;
 
   @Column()
   deposit_from: number;

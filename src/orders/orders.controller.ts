@@ -30,7 +30,6 @@ export class OrdersController {
     return await this.ordersService.byLink(link);
   }
 
-  //fix
   @Get('search-by-username/:username')
   async searchByUsername(@Param('username') username) {
     return await this.ordersService.byUsername(username);
@@ -63,5 +62,10 @@ export class OrdersController {
   @Delete(':id')
   async deleteOrder(@Param('id') id) {
     return await this.ordersService.deleteOne(id);
+  }
+
+  @Post('files')
+  async exportOrdersFile(@Body() body) {
+    return await this.ordersService.exportOrdersFile(body);
   }
 }
