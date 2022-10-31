@@ -1,3 +1,4 @@
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 import {
@@ -43,6 +44,9 @@ export class Client {
 
   @Column({ type: 'enum', enum: EClientGender })
   gender: EClientGender;
+
+  @Column({ type: 'enum', enum: ERoles })
+  role: ERoles;
 
   @Column()
   created_at: Date;

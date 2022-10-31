@@ -1,8 +1,8 @@
-import { UserRole } from '../entities/user.entity';
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 
 export class UserDto {
   id: bigint;
   email: string;
   password: string;
-  role: UserRole;
+  role: ERoles;
 }

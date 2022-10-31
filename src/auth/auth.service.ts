@@ -6,7 +6,7 @@ import {
   EClientStatus,
 } from 'src/clients/interfaces/client.interfaces';
 import { UserDto } from 'src/users/dto/user.dto';
-import { User, UserRole } from 'src/users/entities/user.entity';
+import { User } from 'src/users/entities/user.entity';
 import { Repository } from 'typeorm';
 
 import {
@@ -18,6 +18,7 @@ import { JwtService } from '@nestjs/jwt';
 import { InjectRepository } from '@nestjs/typeorm';
 import { SignIn } from './dto/signin.dto';
 import { SignUp } from './dto/signup.dto';
+import { ERoles } from './interfaces/roles.interfaces';
 
 @Injectable()
 export class AuthService {
@@ -63,6 +64,7 @@ export class AuthService {
       status: EClientStatus.ACTIVE,
       avatar: null,
       gender: EClientGender.OTHER,
+      role: ERoles.CLIENT,
       created_at: new Date(),
       updated_at: new Date(),
       lastAuth: new Date(),
@@ -100,7 +102,7 @@ export class AuthService {
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
-      role: UserRole[signUp.role],
+      role: ERoles[signUp.role],
     });
 
     const tokens = await this.issueTokenPair(String(user.id));

@@ -1,3 +1,5 @@
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
+
 import { EClientGender } from '../interfaces/client.interfaces';
 
 export class ClientDto {
@@ -9,4 +11,5 @@ export class ClientDto {
   spent: number;
   avatar: string;
   gender: EClientGender;
+  role: ERoles;
 }

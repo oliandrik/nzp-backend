@@ -1,14 +1,14 @@
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
+import { HasRoles } from 'src/auth/decorators/roles.decorator';
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 
 import {
   BadRequestException,
   Body,
   Controller,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Post,
   Put,
@@ -27,7 +27,8 @@ import { Client } from './entities/client.entity';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  // only admin
+  @UseGuards(AuthGuard('jwt'))
+  @HasRoles(ERoles.ADMIN)
   @Get()
   async getClients(): Promise<Client[]> {
     return await this.clientsService.getClients();

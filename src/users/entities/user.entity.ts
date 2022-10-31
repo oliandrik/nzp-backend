@@ -1,8 +1,5 @@
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
-export enum UserRole {
-  admin = 'admin',
-}
 
 @Entity({ name: 'users' })
 export class User {
@@ -15,6 +12,6 @@ export class User {
   @Column()
   password: string;
 
-  @Column()
-  role: UserRole;
+  @Column({ type: 'enum', enum: ERoles })
+  role: ERoles;
 }
