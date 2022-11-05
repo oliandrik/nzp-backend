@@ -10,6 +10,7 @@ import { AverageTimeModule } from './average-time/average-time.module';
 import { AverageTime } from './average-time/entities/average-time.entity';
 import { BonusesModule } from './bonuses/bonuses.module';
 import { Bonus } from './bonuses/entities/bonus.entity';
+import { ChatModule } from './chat/chat.module';
 import { ClientsModule } from './clients/clients.module';
 import { Client } from './clients/entities/client.entity';
 import { ExportFile } from './export-files/entities/file.entity';
@@ -81,6 +82,7 @@ import { ServicesModule } from './services/services.module';
     MultiCurrencyModule,
     ProvidersModule,
     TicketsModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [AppService],

@@ -195,4 +195,8 @@ export class AuthService {
       .where('id = :id', { id: id })
       .execute();
   }
+
+  decodedJwtAccessToken(token) {
+    return this.jwtService.decode(token);
+  }
 }

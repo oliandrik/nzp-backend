@@ -17,4 +17,9 @@ export class UsersService {
       { message: 'amdin' }
     );
   }
+
+  async byId(id) {
+    console.log(id, 'id');
+    return await this.userRepository.findOne({ where: { id: id } });
+  }
 }
