@@ -4,7 +4,6 @@ import { Service } from 'src/services/entities/service.entity';
 import { Between, In, Like, Repository } from 'typeorm';
 import { json2xml } from 'xml-js';
 
-import { faker } from '@faker-js/faker';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Order } from './entities/order.entity';
@@ -80,13 +79,7 @@ export class OrdersService {
     return await this.orderRepository.insert({
       client: { id: body.clientId } as Client,
       service: { id: body.serviceId } as Service,
-      // ...body,
-      charge: faker.datatype.float(),
-      link: faker.internet.url(),
-      start_count: faker.datatype.number(),
-      quantity: faker.datatype.number(),
-      status: Math.floor(Math.random() * (6 - 1 + 1) + 1),
-      remains: faker.datatype.number(),
+      ...body,
       mode: 1,
       created_at: new Date(),
       updated_at: new Date(),
