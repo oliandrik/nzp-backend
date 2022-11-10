@@ -86,30 +86,45 @@ export class ClientsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.ADMIN)
+  // @HasRoles(ERoles.ADMIN)
   @Get('asc/:param')
   async getClientsInfoByASC(@Param() param) {
     return await this.clientsService.sortByASC(param.param);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.ADMIN)
+  // @HasRoles(ERoles.ADMIN)
   @Get('desc/:param')
   async getClientsInfoByDESC(@Param() param) {
     return await this.clientsService.sortByDESC(param.param);
   }
 
   @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.ADMIN)
+  // @HasRoles(ERoles.ADMIN)
   @Get('status/:param')
   async getClientsByStatus(@Param() param) {
     return await this.clientsService.getByStatus(param.param);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.ADMIN)
+  // @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.ADMIN)
   @Post('files')
   async exportClientsFile(@Body() body) {
     return await this.clientsService.exportClientsFile(body);
+  }
+
+  @Put(':id/set-password')
+  async setPassword(@Param('id') id, @Body() body) {
+    return await this.clientsService.setPassword(id, body.password);
+  }
+
+  @Put(':id/discount')
+  async discount(@Param('id') id, @Body() body) {
+    return await this.clientsService.discount(id, body.discount);
+  }
+
+  @Put(':id/change-status')
+  async changeStatus(@Param('id') id, @Body() body) {
+    return await this.clientsService.changeStatus(id, body.status);
   }
 }

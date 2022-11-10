@@ -12,7 +12,8 @@ import {
 import { ChatService } from './chat.service';
 import { Chat } from './entities/chat.entity';
 
-@WebSocketGateway(8001, { cors: { origin: '*' } })
+// @WebSocketGateway(8001, { cors: { origin: '*' } })
+
 export class ChatGateway {
   constructor(
     private readonly chatService: ChatService,

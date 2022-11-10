@@ -11,6 +11,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
-  await app.listen(parseInt(process.env.PORT) || 8080);
+  await app.listen(8080);
+  // await app.listen(parseInt(process.env.PORT) || 8080);
 }
 bootstrap();

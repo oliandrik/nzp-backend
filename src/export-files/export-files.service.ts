@@ -19,19 +19,23 @@ export class ExportFilesService {
     return await this.exportFileRepository.find();
   }
 
-  async getByClients() {
-    return await this.exportFileRepository.query(
-      `SELECT * FROM export_files WHERE export_for = "clients"`,
-    );
+  async getBy(param) {
+    return await this.exportFileRepository.find({
+      where: { export_for: param },
+    });
   }
 
-  async getByOrders() {
-    return await this.exportFileRepository.query(
-      `SELECT * FROM export_files WHERE export_for = "orders"`,
+  async bulkDelete(ids: []) {
+    return (
+      await this.exportFileRepository.delete(ids),
+      { message: 'Files were successfully deleted' }
     );
   }
 
   async deleteFile(id) {
-    return await this.exportFileRepository.delete(id);
+    return (
+      await this.exportFileRepository.delete(id),
+      { message: 'File was successfully deleted' }
+    );
   }
 }

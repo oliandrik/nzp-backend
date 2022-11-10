@@ -1,3 +1,4 @@
+import * as bcrypt from 'bcrypt';
 import { ExportFilesService } from 'src/export-files/export-files.service';
 import { Between, In, Repository } from 'typeorm';
 import { json2xml } from 'xml-js';
@@ -5,6 +6,7 @@ import { json2xml } from 'xml-js';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
+import { EClientStatus } from './interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
@@ -69,9 +71,12 @@ export class ClientsService {
       delete findUser.avatar;
     }
 
-    return await this.clientRepository.update(
-      { id },
-      { avatar: avatar.avatar, updated_at: new Date() },
+    return (
+      await this.clientRepository.update(
+        { id },
+        { avatar: avatar.avatar, updated_at: new Date() },
+      ),
+      { message: 'Avatar  was successfully updated' }
     );
   }
 
@@ -124,6 +129,44 @@ export class ClientsService {
     writeStream.end();
 
     return await this.exportFileService.getRepository().save(newFile);
+  }
+
+  async setPassword(id, password) {
+    await this.byId(id);
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    return (
+      await this.clientRepository.update(
+        { id },
+        { password: hashedPassword, updated_at: new Date() },
+      ),
+      { message: 'Password  was successfully updated' }
+    );
+  }
+
+  async discount(id, discount) {
+    await this.byId(id);
+
+    return (
+      await this.clientRepository.update(
+        { id },
+        { discount, updated_at: new Date() },
+      ),
+      { message: 'Discount  was successfully updated' }
+    );
+  }
+
+  async changeStatus(id, status: EClientStatus) {
+    await this.byId(id);
+
+    return (
+      await this.clientRepository.update(
+        { id },
+        { status, updated_at: new Date() },
+      ),
+      { message: 'Status  was successfully updated' }
+    );
   }
 
   // SORT
