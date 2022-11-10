@@ -3,7 +3,7 @@ import { In, Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Service } from './entities/service.entity';
-import { EStatusService } from './interfaces/service.interfaces';
+import { EServiceStatus } from './interfaces/service.interfaces';
 
 @Injectable()
 export class ServicesService {
@@ -35,6 +35,23 @@ export class ServicesService {
 
     return categoryId;
   }
+
+  async selectByStatus(status: string) {
+    return await this.serviceRepository.find({
+      where: { status: EServiceStatus[status] },
+    });
+  }
+
+  async selectByType(param) {
+    return await this.serviceRepository.find({ where: { type: param } });
+  }
+
+  async getSelectedInfoProviders(providers: []) {
+    return await this.serviceRepository.findBy({
+      provider: In(providers),
+    });
+  }
+
   async createService(body) {
     return await (this.serviceRepository.insert({
       ...body,
@@ -55,48 +72,6 @@ export class ServicesService {
     { message: 'duplicated' });
   }
 
-  async deleteSelectedService(id) {
-    await this.byId(id);
-
-    return (
-      await this.serviceRepository.delete(id),
-      { message: 'Service category was successfully deleted' }
-    );
-  }
-
-  async bulkDelete(ids: []) {
-    return await this.serviceRepository.delete(ids);
-  }
-
-  async getSelectedInfoProviders(providers: []) {
-    return await this.serviceRepository.findBy({
-      provider: In(providers),
-    });
-  }
-
-  // SORT
-  async getEnableStatus() {
-    return await this.serviceRepository.find({
-      where: { status: EStatusService.ENABLED },
-    });
-  }
-
-  async getDisableStatus() {
-    return await this.serviceRepository.find({
-      where: { status: EStatusService.DISABLED },
-    });
-  }
-
-  async getType(param) {
-    return await this.serviceRepository.find({ where: { type: param } });
-  }
-
-  async getMany(types) {
-    return await this.serviceRepository.findBy({
-      type: In(types),
-    });
-  }
-
   async updateService(id, service) {
     await this.byId(id);
     return (
@@ -108,15 +83,14 @@ export class ServicesService {
     );
   }
 
-  async makeDisableService(id) {
-    const foundService = await this.byId(id);
+  async changeStatus(id, status: string) {
+    await this.byId(id);
 
     return (
       await this.serviceRepository.update(
         { id },
         {
-          ...foundService,
-          status: EStatusService.DISABLED,
+          status: EServiceStatus[status.toUpperCase()],
           updated_at: new Date(),
         },
       ),
@@ -124,19 +98,16 @@ export class ServicesService {
     );
   }
 
-  async makeEnableService(id) {
-    const foundService = await this.byId(id);
+  async deleteSelectedService(id) {
+    await this.byId(id);
 
     return (
-      await this.serviceRepository.update(
-        { id },
-        {
-          ...foundService,
-          status: EStatusService.ENABLED,
-          updated_at: new Date(),
-        },
-      ),
-      { message: 'Status was changed' }
+      await this.serviceRepository.delete(id),
+      { message: 'Service category was successfully deleted' }
     );
+  }
+
+  async bulkDelete(ids: []) {
+    return await this.serviceRepository.delete(ids);
   }
 }

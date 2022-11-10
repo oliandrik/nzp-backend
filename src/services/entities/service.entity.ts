@@ -3,12 +3,12 @@ import { ServiceCategory } from 'src/service-categories/entities/service-categor
 import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import {
-  ECancelService,
-  EDripFeedService,
-  ELinkDuplicateService,
-  EModeService,
-  EStatusService,
-  ETypeService,
+  EServiceCancel,
+  EServiceDripFeed,
+  EServiceLinkDuplicate,
+  EServiceMode,
+  EServiceStatus,
+  EServiceType,
 } from '../interfaces/service.interfaces';
 
 @Entity({ name: 'services' })
@@ -22,14 +22,14 @@ export class Service {
   @ManyToOne(() => ServiceCategory)
   category: ServiceCategory;
 
-  @Column({ type: 'enum', enum: EStatusService })
-  status: EStatusService;
+  @Column({ type: 'enum', enum: EServiceStatus })
+  status: EServiceStatus;
 
-  @Column({ type: 'enum', enum: ETypeService })
-  type: ETypeService;
+  @Column({ type: 'enum', enum: EServiceType })
+  type: EServiceType;
 
-  @Column({ type: 'enum', enum: EModeService })
-  mode: EModeService;
+  @Column({ type: 'enum', enum: EServiceMode })
+  mode: EServiceMode;
 
   @ManyToOne(() => Provider)
   provider: Provider;
@@ -37,11 +37,11 @@ export class Service {
   // @Column()
   // provider_service: null;
 
-  @Column({ type: 'enum', enum: EDripFeedService })
-  drip_feed: EDripFeedService;
+  @Column({ type: 'enum', enum: EServiceDripFeed })
+  drip_feed: EServiceDripFeed;
 
-  @Column({ type: 'enum', enum: ECancelService })
-  cancel: ECancelService;
+  @Column({ type: 'enum', enum: EServiceCancel })
+  cancel: EServiceCancel;
 
   @Column()
   rate_per: number;
@@ -52,8 +52,8 @@ export class Service {
   @Column()
   max_order: number;
 
-  @Column({ type: 'enum', enum: ELinkDuplicateService })
-  link_duplicate: ELinkDuplicateService;
+  @Column({ type: 'enum', enum: EServiceLinkDuplicate })
+  link_duplicate: EServiceLinkDuplicate;
 
   @Column()
   increment: number;
