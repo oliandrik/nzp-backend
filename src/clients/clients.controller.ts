@@ -35,6 +35,40 @@ export class ClientsController {
   }
 
   @UseGuards(AuthGuard('jwt'))
+  @Get('/avatar/:avatar')
+  async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
+    res.sendFile(avatar, { root: './uploads/avatars' });
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.ADMIN)
+  @Get('asc/:param')
+  async getClientsInfoByASC(@Param() param) {
+    return await this.clientsService.sortByASC(param.param);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.ADMIN)
+  @Get('desc/:param')
+  async getClientsInfoByDESC(@Param() param) {
+    return await this.clientsService.sortByDESC(param.param);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.ADMIN)
+  @Get('status/:param')
+  async getClientsByStatus(@Param() param) {
+    return await this.clientsService.getByStatus(param.param);
+  }
+
+  // @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.ADMIN)
+  @Post('files')
+  async exportClientsFile(@Body() body) {
+    return await this.clientsService.exportClientsFile(body);
+  }
+
+  @UseGuards(AuthGuard('jwt'))
   @HasRoles(ERoles.CLIENT)
   @Put(':id/change-gender')
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
@@ -77,40 +111,6 @@ export class ClientsController {
       { avatar: file.filename },
       id.id,
     );
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  @Get('/avatar/:avatar')
-  async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
-    res.sendFile(avatar, { root: './uploads/avatars' });
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('asc/:param')
-  async getClientsInfoByASC(@Param() param) {
-    return await this.clientsService.sortByASC(param.param);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('desc/:param')
-  async getClientsInfoByDESC(@Param() param) {
-    return await this.clientsService.sortByDESC(param.param);
-  }
-
-  @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('status/:param')
-  async getClientsByStatus(@Param() param) {
-    return await this.clientsService.getByStatus(param.param);
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Post('files')
-  async exportClientsFile(@Body() body) {
-    return await this.clientsService.exportClientsFile(body);
   }
 
   @Put(':id/set-password')

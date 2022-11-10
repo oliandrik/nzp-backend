@@ -3,7 +3,12 @@ import { ExportFilesService } from 'src/export-files/export-files.service';
 import { Between, In, Repository } from 'typeorm';
 import { json2xml } from 'xml-js';
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 import { EClientStatus } from './interfaces/client.interfaces';
@@ -16,6 +21,22 @@ export class ClientsService {
 
     private readonly exportFileService: ExportFilesService,
   ) {}
+
+  // SORT
+
+  async sortByASC(param) {
+    return await this.clientRepository.find({ order: { [param]: 'ASC' } });
+  }
+
+  async sortByDESC(param) {
+    return await this.clientRepository.find({ order: { [param]: 'DESC' } });
+  }
+
+  async getByStatus(param) {
+    return await this.clientRepository.find({ where: { status: param } });
+  }
+
+  //
 
   async byEmail(data) {
     const client = await this.clientRepository.findOne({
@@ -157,29 +178,19 @@ export class ClientsService {
     );
   }
 
-  async changeStatus(id, status: EClientStatus) {
+  async changeStatus(id, status: string) {
     await this.byId(id);
+
+    if (!EClientStatus[status.toUpperCase()]) {
+      throw new BadRequestException('Invalid status');
+    }
 
     return (
       await this.clientRepository.update(
         { id },
-        { status, updated_at: new Date() },
+        { status: EClientStatus[status.toUpperCase()], updated_at: new Date() },
       ),
       { message: 'Status  was successfully updated' }
     );
-  }
-
-  // SORT
-
-  async sortByASC(param) {
-    return await this.clientRepository.find({ order: { [param]: 'ASC' } });
-  }
-
-  async sortByDESC(param) {
-    return await this.clientRepository.find({ order: { [param]: 'DESC' } });
-  }
-
-  async getByStatus(param) {
-    return await this.clientRepository.find({ where: { status: param } });
   }
 }
