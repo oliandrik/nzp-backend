@@ -28,6 +28,8 @@ import { Provider } from './providers/entities/provider.entity';
 import { ProvidersModule } from './providers/providers.module';
 import { Ticket } from './tickets/entities/ticket.entity';
 import { TicketsModule } from './tickets/tickets.module';
+import { Update } from './updates/entities/updates.entity';
+import { UpdatesModule } from './updates/updates.module';
 import { User } from './users/entities/user.entity';
 import { UsersModule } from './users/users.module';
 
@@ -35,7 +37,6 @@ import { ServiceCategory } from './service-categories/entities/service-categorie
 import { ServiceCategoriesModule } from './service-categories/service-categories.module';
 import { Service } from './services/entities/service.entity';
 import { ServicesModule } from './services/services.module';
-import { UpdatesModule } from './updates/updates.module';
 
 @Module({
   imports: [
@@ -64,6 +65,7 @@ import { UpdatesModule } from './updates/updates.module';
         MultiCurrency,
         Provider,
         Ticket,
+        Update,
       ],
       synchronize: true,
     }),

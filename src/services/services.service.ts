@@ -1,3 +1,4 @@
+import { UpdatesService } from 'src/updates/updates.service';
 import { In, Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
@@ -10,6 +11,8 @@ export class ServicesService {
   constructor(
     @InjectRepository(Service)
     private readonly serviceRepository: Repository<Service>,
+
+    private readonly updService: UpdatesService,
   ) {}
 
   async findAll() {
@@ -73,7 +76,43 @@ export class ServicesService {
   }
 
   async updateService(id, service) {
-    await this.byId(id);
+    const foundService = await this.byId(id);
+
+    const oldService = {
+      service: { id: id } as Service,
+
+      old_status: foundService.status,
+      new_status: service.status,
+
+      old_rate_per: foundService.rate_per,
+
+      new_rate_per:
+        service.rate_per !== undefined
+          ? service.rate_per
+          : foundService.rate_per,
+    };
+
+    if (
+      oldService.old_status !== oldService.new_status &&
+      oldService.old_rate_per == oldService.new_rate_per
+    ) {
+      await this.updService.create(
+        oldService,
+        EServiceStatus[oldService.new_status],
+      );
+    }
+
+    if (
+      oldService.old_status == oldService.new_status &&
+      oldService.old_rate_per !== oldService.new_rate_per
+    ) {
+      const mark =
+        oldService.old_rate_per < oldService.new_rate_per
+          ? 'increased'
+          : 'decreased';
+      await this.updService.create(oldService, mark);
+    }
+
     return (
       await this.serviceRepository.update(
         { id },
