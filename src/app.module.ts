@@ -35,6 +35,7 @@ import { ServiceCategory } from './service-categories/entities/service-categorie
 import { ServiceCategoriesModule } from './service-categories/service-categories.module';
 import { Service } from './services/entities/service.entity';
 import { ServicesModule } from './services/services.module';
+import { UpdatesModule } from './updates/updates.module';
 
 @Module({
   imports: [
@@ -83,6 +84,7 @@ import { ServicesModule } from './services/services.module';
     ProvidersModule,
     TicketsModule,
     ChatModule,
+    UpdatesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
