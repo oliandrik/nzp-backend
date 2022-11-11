@@ -35,9 +35,13 @@ export class AuthController {
     return await this.authService.signIn(signIn);
   }
 
-  @Put('/change-password/:id')
+  @Put(':id/change-password')
   async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.authService.changePassword(clientDto, id);
+  }
+  @Put('send-new-password')
+  async sendNewPassword(@Body() body: ClientDto) {
+    return await this.authService.sendNewPassword(body);
   }
 
   @Post('/admin-signin')

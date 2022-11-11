@@ -186,14 +186,43 @@ export class AuthService {
 
     const hashedPassword = await bcrypt.hash(client.newPassword, 10);
 
-    return await this.clientRepository
-      .createQueryBuilder()
-      .update()
-      .set({
-        password: hashedPassword,
-      })
-      .where('id = :id', { id: id })
-      .execute();
+    return (
+      await this.clientRepository.update(
+        { id },
+        { password: hashedPassword, updated_at: new Date() },
+      ),
+      { message: `Your password was successfully updated` }
+    );
+  }
+
+  async sendNewPassword(payload) {
+    const user = await this.clientRepository.findOne({
+      where: { email: payload.email },
+    });
+
+    if (!user) {
+      throw new BadRequestException('User is not found');
+    }
+
+    let generatedPassword = '';
+    const characters =
+      'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
+    const charactersLength = characters.length;
+    for (let i = 0; i < 9; i++) {
+      generatedPassword += characters.charAt(
+        Math.floor(Math.random() * charactersLength),
+      );
+    }
+
+    const hashedPassword = await bcrypt.hash(generatedPassword, 10);
+
+    return (
+      await this.clientRepository.update(
+        { id: user.id },
+        { password: hashedPassword, updated_at: new Date() },
+      ),
+      { message: `here you can see your new password ${generatedPassword}` }
+    );
   }
 
   decodedJwtAccessToken(token) {
