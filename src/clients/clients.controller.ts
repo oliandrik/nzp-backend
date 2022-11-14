@@ -27,7 +27,7 @@ import { Client } from './entities/client.entity';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Get()
   async getClients(): Promise<Client[]> {

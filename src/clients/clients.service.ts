@@ -32,8 +32,10 @@ export class ClientsService {
     return await this.clientRepository.find({ order: { [param]: 'DESC' } });
   }
 
-  async getByStatus(param) {
-    return await this.clientRepository.find({ where: { status: param } });
+  async getByStatus(param: string) {
+    return await this.clientRepository.find({
+      where: { status: EClientStatus[param.toUpperCase()] },
+    });
   }
 
   //
