@@ -28,33 +28,33 @@ export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.ADMIN)
+  // @HasRoles(ERoles.ADMIN)
   @Get()
   async getClients(): Promise<Client[]> {
     return await this.clientsService.getClients();
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   @Get('/avatar/:avatar')
   async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
     res.sendFile(avatar, { root: './uploads/avatars' });
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Get('asc/:param')
   async getClientsInfoByASC(@Param() param) {
     return await this.clientsService.sortByASC(param.param);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Get('desc/:param')
   async getClientsInfoByDESC(@Param() param) {
     return await this.clientsService.sortByDESC(param.param);
   }
 
-  @UseGuards(AuthGuard('jwt'))
+  // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Get('status/:param')
   async getClientsByStatus(@Param() param) {
@@ -68,15 +68,15 @@ export class ClientsController {
     return await this.clientsService.exportClientsFile(body);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.CLIENT)
+  // @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.CLIENT)
   @Put(':id/change-gender')
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.clientsService.changeGender(clientDto, id);
   }
 
-  @UseGuards(AuthGuard('jwt'))
-  @HasRoles(ERoles.CLIENT)
+  // @UseGuards(AuthGuard('jwt'))
+  // @HasRoles(ERoles.CLIENT)
   @Put(':id/change-avatar')
   @UseInterceptors(
     FileInterceptor('file', {
