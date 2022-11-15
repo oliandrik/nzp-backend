@@ -12,6 +12,7 @@ import {
   Param,
   Post,
   Put,
+  Req,
   Res,
   UploadedFile,
   UseGuards,
@@ -21,7 +22,6 @@ import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ClientsService } from './clients.service';
 import { ClientDto } from './dto/client.dto';
-import { Client } from './entities/client.entity';
 
 @Controller('clients')
 export class ClientsController {
@@ -30,8 +30,13 @@ export class ClientsController {
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Get()
-  async getClients(): Promise<Client[]> {
-    return await this.clientsService.getClients();
+  async getClients(@Req() req) {
+    const builder = this.clientsService.queryBilder('clients');
+    const page: number = parseInt(req.query.page as any) || 1;
+    const perPage = 20;
+    (await builder).offset((page - 1) * perPage).limit(perPage);
+
+    return (await builder).getMany();
   }
 
   // @UseGuards(AuthGuard('jwt'))

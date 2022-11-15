@@ -1,6 +1,8 @@
+import { ProvidersService } from 'src/providers/providers.service';
 import { UpdatesService } from 'src/updates/updates.service';
 import { In, Repository } from 'typeorm';
 
+import { HttpService } from '@nestjs/axios';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Service } from './entities/service.entity';
@@ -13,6 +15,8 @@ export class ServicesService {
     private readonly serviceRepository: Repository<Service>,
 
     private readonly updService: UpdatesService,
+    private readonly providerService: ProvidersService,
+    private readonly httpService: HttpService,
   ) {}
 
   async findAll() {
@@ -55,13 +59,36 @@ export class ServicesService {
     });
   }
 
+  async getServicesFromProvider(param) {
+    const provider = await this.providerService.byName(param);
+    const service = await this.callServicesAPI(
+      provider.provider_url,
+      provider.API_key,
+    );
+    console.log(service);
+    return service;
+  }
+
+  async callServicesAPI(url, key) {
+    try {
+      const result = await this.httpService
+        .get(
+          `https://smmstore.pro/api/v2?key=499b334cd5a19d3a90933d81e39fd1f3&action=services`,
+        )
+        .toPromise();
+      return result.data;
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   async createService(body) {
     return await (this.serviceRepository.insert({
       ...body,
       created_at: new Date(),
       updated_at: new Date(),
     }),
-    { message: 'created' });
+    { message: 'Service was successfully created' });
   }
 
   async duplicateService(id) {
@@ -72,7 +99,7 @@ export class ServicesService {
     });
 
     return await (this.serviceRepository.save(newServiceCategory),
-    { message: 'duplicated' });
+    { message: 'Service was successfully duplicated' });
   }
 
   async updateService(id, service) {
@@ -118,7 +145,7 @@ export class ServicesService {
         { id },
         { ...service, updated_at: new Date() },
       ),
-      { message: 'Service was updated' }
+      { message: 'Service was successfully updated' }
     );
   }
 

@@ -41,6 +41,15 @@ export class ServicesController {
     return await this.servicesService.getSelectedInfoProviders(body.providers);
   }
 
+  @Get('get-services-from-provider')
+  async getServicesFromProvider(@Body() body) {
+    const result = await this.servicesService.getServicesFromProvider(
+      body.provider,
+    );
+
+    return result;
+  }
+
   @Post()
   async createService(@Body() service: ServiceDto) {
     return await this.servicesService.createService(service);

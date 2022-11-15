@@ -1,6 +1,11 @@
 import { Repository } from 'typeorm';
 
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Provider } from './entities/provider.entity';
 
@@ -27,7 +32,27 @@ export class ProvidersService {
     return provider;
   }
 
+  async byName(providerName) {
+    return await this.providerRepository.findOne({
+      where: { provider_name: providerName },
+    });
+  }
+
+  async byUrl(providerUrl) {
+    const provider = await this.providerRepository.findOne({
+      where: { provider_url: providerUrl },
+    });
+
+    if (provider) {
+      throw new BadRequestException('This provider already exists');
+    }
+
+    return provider;
+  }
+
   async create(body) {
+    await this.byUrl(body.provider_url);
+
     return await this.providerRepository.insert({
       ...body,
       created_at: new Date(),

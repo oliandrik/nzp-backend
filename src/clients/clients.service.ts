@@ -68,6 +68,10 @@ export class ClientsService {
     return await this.clientRepository.find();
   }
 
+  async queryBilder(alias: string) {
+    return this.clientRepository.createQueryBuilder(alias);
+  }
+
   async changeGender(data, id) {
     await this.byId(id);
 
