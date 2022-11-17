@@ -70,8 +70,6 @@ export class AuthService {
       lastAuth: new Date(),
     });
 
-    console.log(user, ' user');
-
     const tokens = await this.issueTokenPair(String(user.id));
 
     return (
@@ -118,8 +116,8 @@ export class AuthService {
   }
 
   async signIn(signIn: SignIn) {
-    const user = await this.validateUser(signIn);
-    const payload = { email: user.email, id: user.id };
+    const client = await this.validate(signIn);
+    const payload = { email: client.email, id: client.id };
 
     return {
       message: 'Successfully authenticated',
@@ -127,15 +125,16 @@ export class AuthService {
     };
   }
 
-  async validateUser(signIn: SignIn) {
+  async validate(signIn: SignIn) {
     const { email, password } = signIn;
     const user =
-      (await this.clientRepository.findOne({ where: { email: email } })) ||
-      (await this.userRepository.findOne({ where: { email: email } }));
+      (await this.clientRepository.findOne({
+        where: { email: email },
+      })) || (await this.userRepository.findOne({ where: { email: email } }));
 
     if (!user) {
       throw new UnauthorizedException(
-        'We cannot find account with this email address',
+        'We cannot find person account with this email address',
       );
     }
 
@@ -150,13 +149,9 @@ export class AuthService {
 
   async issueTokenPair(userId: string) {
     const data = { id: userId };
-    const refreshToken = await this.jwtService.signAsync(data, {
-      expiresIn: '1d',
-    });
+    const refreshToken = await this.jwtService.signAsync(data);
 
-    const accessToken = await this.jwtService.signAsync(data, {
-      expiresIn: '1h',
-    });
+    const accessToken = await this.jwtService.signAsync(data);
 
     return { refreshToken, accessToken };
   }

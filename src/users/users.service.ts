@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
@@ -12,14 +12,18 @@ export class UsersService {
   ) {}
 
   async byEmail(data) {
-    return (
-      await this.userRepository.findOne({ where: { email: data } }),
-      { message: 'amdin' }
-    );
+    const client = await this.userRepository.findOne({
+      where: { email: data },
+    });
+
+    if (!client) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
+    return client;
   }
 
   async byId(id) {
-    console.log(id, 'id');
     return await this.userRepository.findOne({ where: { id: id } });
   }
 }

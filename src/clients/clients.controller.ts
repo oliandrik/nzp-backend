@@ -1,7 +1,8 @@
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
-import { HasRoles } from 'src/auth/decorators/roles.decorator';
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 
 import {
@@ -27,16 +28,12 @@ import { ClientDto } from './dto/client.dto';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  // @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
+  @Roles(ERoles.ADMIN)
+  @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   async getClients(@Req() req) {
-    const builder = this.clientsService.queryBilder('clients');
-    const page: number = parseInt(req.query.page as any) || 1;
-    const perPage = 20;
-    (await builder).offset((page - 1) * perPage).limit(perPage);
-
-    return (await builder).getMany();
+    console.log(RolesGuard, 'RolesGuard');
+    return await this.clientsService.getClients(req);
   }
 
   // @UseGuards(AuthGuard('jwt'))
@@ -75,14 +72,14 @@ export class ClientsController {
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.CLIENT)
-  @Put(':id/change-gender')
+  @Put(':id/set-gender')
   async changeGender(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.clientsService.changeGender(clientDto, id);
   }
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.CLIENT)
-  @Put(':id/change-avatar')
+  @Put(':id/set-avatar')
   @UseInterceptors(
     FileInterceptor('file', {
       storage: diskStorage({
@@ -123,12 +120,12 @@ export class ClientsController {
     return await this.clientsService.setPassword(id, body.password);
   }
 
-  @Put(':id/discount')
+  @Put(':id/set-discount')
   async discount(@Param('id') id, @Body() body) {
     return await this.clientsService.discount(id, body.discount);
   }
 
-  @Put(':id/change-status')
+  @Put(':id/set-status')
   async changeStatus(@Param('id') id, @Body() body) {
     return await this.clientsService.changeStatus(id, body.status);
   }

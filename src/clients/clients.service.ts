@@ -64,12 +64,14 @@ export class ClientsService {
     return client;
   }
 
-  async getClients() {
-    return await this.clientRepository.find();
-  }
+  async getClients(req) {
+    const builder = this.clientRepository.createQueryBuilder('clients');
 
-  async queryBilder(alias: string) {
-    return this.clientRepository.createQueryBuilder(alias);
+    const page: number = parseInt(req.query.page as any) || 1;
+    const perPage = 20;
+    (await builder).offset((page - 1) * perPage).limit(perPage);
+
+    return (await builder).getMany();
   }
 
   async changeGender(data, id) {
