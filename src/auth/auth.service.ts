@@ -11,6 +11,8 @@ import { Repository } from 'typeorm';
 
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -254,6 +256,24 @@ export class AuthService {
         lastAuth: new Date(),
       }),
       { message: 'User was successfully created' }
+    );
+  }
+
+  async updateUser(id, data) {
+    const client = await this.clientRepository.findOne({
+      where: { id: id.id },
+    });
+
+    if (!client) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
+
+    return (
+      await this.clientRepository.update(
+        { id },
+        { username: data.username, email: data.email, updated_at: new Date() },
+      ),
+      { message: 'User  was successfully updated' }
     );
   }
 

@@ -40,6 +40,11 @@ export class AuthController {
     return await this.authService.addUser(body);
   }
 
+  @Put(':id/update-user')
+  async updateUser(@Param('id') id, @Body() body) {
+    return await this.authService.updateUser(id, body);
+  }
+
   @Put(':id/change-password')
   async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.authService.changePassword(clientDto, id);
