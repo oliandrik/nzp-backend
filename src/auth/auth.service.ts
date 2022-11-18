@@ -220,6 +220,43 @@ export class AuthService {
     );
   }
 
+  async addUser(data) {
+    const oldUser = await this.clientRepository.findOneBy({
+      email: data.email,
+    });
+
+    if (oldUser) {
+      throw new BadRequestException(
+        'User with this email is already in system',
+      );
+    }
+
+    const { email, password, username } = data;
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    return (
+      await this.clientRepository.insert({
+        username,
+        email,
+        password: hashedPassword,
+        terms: true,
+        balance: 0.0,
+        spent: 0.0,
+        discount: 0.0,
+        rank: EClientRank.NEW,
+        status: EClientStatus.ACTIVE,
+        avatar: null,
+        gender: EClientGender.OTHER,
+        role: ERoles.CLIENT,
+        created_at: new Date(),
+        updated_at: new Date(),
+        lastAuth: new Date(),
+      }),
+      { message: 'User was successfully created' }
+    );
+  }
+
   decodedJwtAccessToken(token) {
     return this.jwtService.decode(token);
   }

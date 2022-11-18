@@ -28,11 +28,10 @@ import { ClientDto } from './dto/client.dto';
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
-  @Roles(ERoles.ADMIN)
-  @UseGuards(AuthGuard('jwt'), RolesGuard)
+  // @Roles(ERoles.ADMIN)
+  // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   async getClients(@Req() req) {
-    console.log(RolesGuard, 'RolesGuard');
     return await this.clientsService.getClients(req);
   }
 
