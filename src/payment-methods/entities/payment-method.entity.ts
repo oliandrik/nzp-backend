@@ -1,6 +1,6 @@
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 
-import { EIsAllowedForNewUser } from '../interfaces/payment-method.interfaces';
+import { EIsAllowedPaymentMenthod } from '../interfaces/payment-method.interfaces';
 
 @Entity({ name: 'payment_methods' })
 export class PaymentMethod {
@@ -8,7 +8,10 @@ export class PaymentMethod {
   id: number;
 
   @Column()
-  method_name: string;
+  payment_method: string;
+
+  @Column()
+  payment_name: string;
 
   @Column({ type: 'numeric', precision: 10, scale: 2, default: null })
   minimal_payment: number;
@@ -16,12 +19,11 @@ export class PaymentMethod {
   @Column({ type: 'numeric', precision: 10, scale: 2, default: null })
   maximal_payment: number;
 
-  @Column({
-    type: 'enum',
-    enum: EIsAllowedForNewUser,
-    default: EIsAllowedForNewUser.ALLOWED,
-  })
-  is_allowed_for_new_users: EIsAllowedForNewUser;
+  @Column({ type: 'enum', enum: EIsAllowedPaymentMenthod })
+  is_allowed: EIsAllowedPaymentMenthod;
+
+  @Column()
+  visibility: boolean;
 
   @Column({ default: null })
   instruction: string;

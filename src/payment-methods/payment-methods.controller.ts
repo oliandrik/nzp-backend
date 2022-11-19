@@ -1,15 +1,14 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
   Get,
-  HttpCode,
-  HttpStatus,
   Param,
   Post,
   Put,
 } from '@nestjs/common';
-import { PaymentMethodDto } from './dto/payment-methods.dto';
+import { EIsAllowedPaymentMenthod } from './interfaces/payment-method.interfaces';
 import { PaymentMethodsService } from './payment-methods.service';
 
 @Controller('payment-methods')
@@ -17,35 +16,36 @@ export class PaymentMethodsController {
   constructor(private readonly paymentMethodsService: PaymentMethodsService) {}
 
   @Get()
-  @HttpCode(HttpStatus.OK)
   async getAllPaymentMethods() {
-    return await this.paymentMethodsService.getAllPaymentMethods();
+    return await this.paymentMethodsService.getAll();
   }
 
   @Get(':id')
-  @HttpCode(HttpStatus.OK)
   async getPaymentMethod(@Param() id) {
     return await this.paymentMethodsService.byId(id.id);
   }
 
   @Post()
-  @HttpCode(HttpStatus.CREATED)
-  async createPaymentMethod(@Body() body: PaymentMethodDto) {
-    return await this.paymentMethodsService.createPaymentMethod(body);
+  async createPaymentMethod(@Body() body) {
+    return await this.paymentMethodsService.create(body);
   }
 
-  @Put(':id')
-  @HttpCode(HttpStatus.OK)
-  async changeAccessibilityToNewUsers(@Param('id') id, @Body() body) {
-    return await this.paymentMethodsService.changeAccessibilityToNewUsers(
-      id,
-      body.is_allowed_for_new_users,
-    );
+  @Put(':id/set-visibility')
+  async visibility(@Param('id') id, @Body() body) {
+    return await this.paymentMethodsService.visibility(id, body.visibility);
+  }
+
+  @Put(':id/set-accessibility')
+  async accessibility(@Param('id') id, @Body() body) {
+    if (!EIsAllowedPaymentMenthod[body.is_allowed.toUpperCase()]) {
+      throw new BadRequestException('Invalid status');
+    }
+
+    return await this.paymentMethodsService.accessibility(id, body.is_allowed);
   }
 
   @Delete(':id')
-  @HttpCode(HttpStatus.OK)
   async deletePaymentMethod(@Param('id') id) {
-    return await this.paymentMethodsService.deletePaymentMethod(id);
+    return await this.paymentMethodsService.deleteOne(id);
   }
 }

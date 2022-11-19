@@ -3,6 +3,7 @@ import { Repository } from 'typeorm';
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { PaymentMethod } from './entities/payment-method.entity';
+import { EIsAllowedPaymentMenthod } from './interfaces/payment-method.interfaces';
 
 @Injectable()
 export class PaymentMethodsService {
@@ -26,23 +27,20 @@ export class PaymentMethodsService {
     return paymentMethodId;
   }
 
-  async getAllPaymentMethods() {
-    return await this.paymentMethodRepository.query(
-      `SELECT * FROM payment_methods`,
-    );
+  async getAll() {
+    return await this.paymentMethodRepository.find();
   }
 
-  async createPaymentMethod(body) {
-    const newPaymentMethod = await this.paymentMethodRepository.create({
-      method_name: body.method_name,
-      minimal_payment: body.minimal_payment,
-      maximal_payment: body.maximal_payment,
-      is_allowed_for_new_users: body.is_allowed_for_new_users,
-      instruction: body.instruction,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
-    return await this.paymentMethodRepository.save(newPaymentMethod);
+  async create(body) {
+    return (
+      await this.paymentMethodRepository.insert({
+        ...body,
+        is_allowed: EIsAllowedPaymentMenthod.ALLOWED,
+        created_at: new Date(),
+        updated_at: new Date(),
+      }),
+      { message: 'Payment method was successfully created' }
+    );
   }
 
   async updateService(id, body) {
@@ -57,23 +55,39 @@ export class PaymentMethodsService {
     );
   }
 
-  async changeAccessibilityToNewUsers(id, param) {
+  async visibility(id, visibility) {
     await this.byId(id);
 
     return (
       await this.paymentMethodRepository.update(
         { id },
-        { is_allowed_for_new_users: param, updated_at: new Date() },
+        { visibility: visibility, updated_at: new Date() },
       ),
-      { message: 'Payment method for new users was updated' }
+      { message: 'Payment method was updated' }
     );
   }
 
-  async deletePaymentMethod(id) {
+  async accessibility(id, param: string) {
     await this.byId(id);
 
-    return await this.paymentMethodRepository.query(
-      `DELETE FROM payment_methods WHERE id = "${id}"`,
+    return (
+      await this.paymentMethodRepository.update(
+        { id },
+        {
+          is_allowed: EIsAllowedPaymentMenthod[param.toUpperCase()],
+          updated_at: new Date(),
+        },
+      ),
+      { message: 'Payment method was updated' }
+    );
+  }
+
+  async deleteOne(id: number) {
+    await this.byId(id);
+
+    return (
+      await this.paymentMethodRepository.delete(id),
+      { message: 'Payment method was successfully deleted' }
     );
   }
 }
