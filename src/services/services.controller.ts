@@ -43,11 +43,7 @@ export class ServicesController {
 
   @Get('get-services-from-provider')
   async getServicesFromProvider(@Body() body) {
-    const result = await this.servicesService.getServicesFromProvider(
-      body.provider,
-    );
-
-    return result;
+    return await this.servicesService.getServicesFromProvider(body.provider);
   }
 
   @Post()

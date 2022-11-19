@@ -13,6 +13,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UploadedFile,
@@ -31,8 +32,8 @@ export class ClientsController {
   // @Roles(ERoles.ADMIN)
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
-  async getClients(@Req() req) {
-    return await this.clientsService.getClients(req);
+  async getClients(@Query() query) {
+    return await this.clientsService.getClients(query);
   }
 
   // @UseGuards(AuthGuard('jwt'))

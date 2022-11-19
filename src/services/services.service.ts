@@ -60,12 +60,13 @@ export class ServicesService {
   }
 
   async getServicesFromProvider(param) {
+    console.log(param);
     const provider = await this.providerService.byName(param);
     const service = await this.callServicesAPI(
       provider.provider_url,
       provider.API_key,
     );
-    console.log(service);
+
     return service;
   }
 
@@ -73,9 +74,10 @@ export class ServicesService {
     try {
       const result = await this.httpService
         .get(
-          `https://smmstore.pro/api/v2?key=499b334cd5a19d3a90933d81e39fd1f3&action=services`,
+          `https://apibayim.com/api/v2?key=f992bc760ffbab5073afe9438ae67877&action=services`,
         )
         .toPromise();
+      console.log(result, 'res');
       return result.data;
     } catch (err) {
       console.log(err);

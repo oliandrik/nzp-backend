@@ -1,6 +1,6 @@
 import * as bcrypt from 'bcrypt';
 import { ExportFilesService } from 'src/export-files/export-files.service';
-import { Between, In, Repository } from 'typeorm';
+import { Between, In, Like, Repository } from 'typeorm';
 import { json2xml } from 'xml-js';
 
 import {
@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
-import { EClientStatus } from './interfaces/client.interfaces';
+import { EClientRank, EClientStatus } from './interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
@@ -64,14 +64,22 @@ export class ClientsService {
     return client;
   }
 
-  async getClients(req) {
-    const builder = this.clientRepository.createQueryBuilder('clients');
+  async getClients(query) {
+    const take = query.take || 20;
+    const page = query.page || 1;
+    const skip = (page - 1) * take;
+    const keyword = query.keyword || '';
 
-    const page: number = parseInt(req.query.page as any) || 1;
-    const perPage = 20;
-    (await builder).offset((page - 1) * perPage).limit(perPage);
+    const [result, total] = await this.clientRepository.findAndCount({
+      where: { username: Like('%' + keyword + '%') },
+      take: take,
+      skip: skip,
+    });
 
-    return (await builder).getMany();
+    return {
+      data: result,
+      total: total,
+    };
   }
 
   async changeGender(data, id) {
