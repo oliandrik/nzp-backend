@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
-import { EClientRank, EClientStatus } from './interfaces/client.interfaces';
+import { EClientStatus } from './interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
@@ -21,24 +21,6 @@ export class ClientsService {
 
     private readonly exportFileService: ExportFilesService,
   ) {}
-
-  // SORT
-
-  async sortByASC(param) {
-    return await this.clientRepository.find({ order: { [param]: 'ASC' } });
-  }
-
-  async sortByDESC(param) {
-    return await this.clientRepository.find({ order: { [param]: 'DESC' } });
-  }
-
-  async getByStatus(param: string) {
-    return await this.clientRepository.find({
-      where: { status: EClientStatus[param.toUpperCase()] },
-    });
-  }
-
-  //
 
   async byEmail(data) {
     const client = await this.clientRepository.findOne({
@@ -65,15 +47,26 @@ export class ClientsService {
   }
 
   async getClients(query) {
-    const take = query.take || 20;
+    const clientsPerPage = query.take || 20;
     const page = query.page || 1;
-    const skip = (page - 1) * take;
+    const skip = (page - 1) * clientsPerPage;
     const keyword = query.keyword || '';
 
+    const status: string = query.status || '';
+
+    const sortByField = query.sortBy || 'created_at';
+    const sortDirection = query.sortDir || 'ASC';
+
     const [result, total] = await this.clientRepository.findAndCount({
-      where: { username: Like('%' + keyword + '%') },
-      take: take,
+      where: {
+        username: Like('%' + keyword + '%'),
+        status: EClientStatus[status.toUpperCase()],
+      },
+      take: clientsPerPage,
       skip: skip,
+      order: {
+        [sortByField]: sortDirection,
+      },
     });
 
     return {

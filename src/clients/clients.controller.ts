@@ -14,7 +14,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   Res,
   UploadedFile,
   UseGuards,
@@ -40,27 +39,6 @@ export class ClientsController {
   @Get('/avatar/:avatar')
   async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
     res.sendFile(avatar, { root: './uploads/avatars' });
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('asc/:param')
-  async getClientsInfoByASC(@Param() param) {
-    return await this.clientsService.sortByASC(param.param);
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('desc/:param')
-  async getClientsInfoByDESC(@Param() param) {
-    return await this.clientsService.sortByDESC(param.param);
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
-  // @HasRoles(ERoles.ADMIN)
-  @Get('status/:param')
-  async getClientsByStatus(@Param() param) {
-    return await this.clientsService.getByStatus(param.param);
   }
 
   // @UseGuards(AuthGuard('jwt'))
