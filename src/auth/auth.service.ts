@@ -11,6 +11,8 @@ import { UsersService } from 'src/users/users.service';
 
 import {
   BadRequestException,
+  HttpException,
+  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
@@ -106,6 +108,9 @@ export class AuthService {
 
   async signIn(signIn: SignIn) {
     const client = await this.validate(signIn);
+
+    console.log(client, 'client');
+
     const payload = { email: client.email, id: client.id };
 
     return {
@@ -116,9 +121,10 @@ export class AuthService {
 
   async validate(signIn: SignIn) {
     const { email, password } = signIn;
+
     const user =
-      (await this.injectService.byEmail(email)) ||
-      (await this.userService.findOldUser(email));
+      (await this.userService.byEmail(email)) ||
+      (await this.injectService.byEmail(email));
 
     if (!user) {
       throw new UnauthorizedException(
@@ -152,6 +158,10 @@ export class AuthService {
 
   async sendNewPassword(payload) {
     const client = await this.injectService.byEmail(payload.email);
+
+    if (!client) {
+      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
+    }
 
     let generatedPassword = '';
     const characters =

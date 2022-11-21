@@ -1,12 +1,6 @@
 import { Repository } from 'typeorm';
 
-import {
-  BadRequestException,
-  Body,
-  HttpException,
-  HttpStatus,
-  Injectable,
-} from '@nestjs/common';
+import { BadRequestException, Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 
@@ -17,16 +11,12 @@ export class UsersService {
     private readonly userRepository: Repository<User>,
   ) {}
 
-  async byEmail(data) {
-    const client = await this.userRepository.findOne({
-      where: { email: data },
+  async byEmail(email) {
+    const user = await this.userRepository.findOne({
+      where: { email: email },
     });
 
-    if (!client) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
-
-    return client;
+    return user;
   }
 
   async byId(id) {

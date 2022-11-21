@@ -11,14 +11,10 @@ export class InjectService {
     public readonly clientRepository: Repository<Client>,
   ) {}
 
-  async byEmail(data) {
+  async byEmail(email) {
     const client = await this.clientRepository.findOne({
-      where: { email: data },
+      where: { email: email },
     });
-
-    if (!client) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
 
     return client;
   }
