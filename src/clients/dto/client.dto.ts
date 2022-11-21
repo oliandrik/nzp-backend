@@ -3,7 +3,7 @@ import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 import { EClientGender } from '../interfaces/client.interfaces';
 
 export class ClientDto {
-  id: bigint;
+  // id: bigint;
   username: string;
   email: string;
   password: string;

@@ -1,9 +1,6 @@
 import { Response } from 'express';
 import { diskStorage } from 'multer';
 import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
-import { Roles } from 'src/auth/decorators/roles.decorator';
-import { RolesGuard } from 'src/auth/guards/roles.guard';
-import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 
 import {
   BadRequestException,
@@ -16,36 +13,46 @@ import {
   Query,
   Res,
   UploadedFile,
-  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ClientsService } from './clients.service';
 import { ClientDto } from './dto/client.dto';
+import { InjectService } from './inject.service';
+
+import { AdminClientsService } from './services/admin-clients.service';
+import { ClientsService } from './services/clients.service';
 
 @Controller('clients')
 export class ClientsController {
-  constructor(private readonly clientsService: ClientsService) {}
+  constructor(
+    private readonly clientsService: ClientsService,
+    private readonly adminClientsService: AdminClientsService,
+    private readonly injectClientService: InjectService,
+  ) {}
 
   // @Roles(ERoles.ADMIN)
   // @UseGuards(AuthGuard('jwt'), RolesGuard)
   @Get()
   async getClients(@Query() query) {
-    return await this.clientsService.getClients(query);
-  }
-
-  // @UseGuards(AuthGuard('jwt'))
-  @Get('/avatar/:avatar')
-  async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
-    res.sendFile(avatar, { root: './uploads/avatars' });
+    return await this.adminClientsService.getClients(query);
   }
 
   // @UseGuards(AuthGuard('jwt'))
   // @HasRoles(ERoles.ADMIN)
   @Post('files')
   async exportClientsFile(@Body() body) {
-    return await this.clientsService.exportClientsFile(body);
+    return await this.adminClientsService.exportClientsFile(body);
+  }
+
+  @Get(':id')
+  async getOne(@Param('id') id) {
+    return await this.injectClientService.byId(id);
+  }
+
+  // @UseGuards(AuthGuard('jwt'))
+  @Get('/avatar/:avatar')
+  async getAvatar(@Param('avatar') avatar, @Res() res: Response) {
+    res.sendFile(avatar, { root: './uploads/avatars' });
   }
 
   // @UseGuards(AuthGuard('jwt'))
@@ -85,7 +92,7 @@ export class ClientsController {
       throw new BadRequestException('Error');
     }
 
-    await this.clientsService.byId(user);
+    await this.injectClientService.byId(user);
 
     return await this.clientsService.changeAvatar(
       { avatar: file.filename },
@@ -95,16 +102,31 @@ export class ClientsController {
 
   @Put(':id/set-password')
   async setPassword(@Param('id') id, @Body() body) {
-    return await this.clientsService.setPassword(id, body.password);
+    return await this.adminClientsService.setPassword(id, body.password);
   }
 
   @Put(':id/set-discount')
   async discount(@Param('id') id, @Body() body) {
-    return await this.clientsService.discount(id, body.discount);
+    return await this.adminClientsService.discount(id, body.discount);
   }
 
   @Put(':id/set-status')
   async changeStatus(@Param('id') id, @Body() body) {
-    return await this.clientsService.changeStatus(id, body.status);
+    return await this.adminClientsService.changeStatus(id, body.status);
+  }
+
+  @Post('add-user')
+  async addUser(@Body() body) {
+    return await this.adminClientsService.addClient(body);
+  }
+
+  @Put(':id/update-user')
+  async updateUser(@Param('id') id, @Body() body) {
+    return await this.adminClientsService.updateClient(id, body);
+  }
+
+  @Put(':id/change-password')
+  async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
+    return await this.clientsService.changePassword(clientDto, id);
   }
 }

@@ -1,23 +1,20 @@
 import * as bcrypt from 'bcrypt';
-import { Client } from 'src/clients/entities/client.entity';
+import { InjectService } from 'src/clients/inject.service';
 import {
   EClientGender,
   EClientRank,
   EClientStatus,
 } from 'src/clients/interfaces/client.interfaces';
-import { UserDto } from 'src/users/dto/user.dto';
-import { User } from 'src/users/entities/user.entity';
-import { Repository } from 'typeorm';
+import { AdminClientsService } from 'src/clients/services/admin-clients.service';
+import { ClientsService } from 'src/clients/services/clients.service';
+import { UsersService } from 'src/users/users.service';
 
 import {
   BadRequestException,
-  HttpException,
-  HttpStatus,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { InjectRepository } from '@nestjs/typeorm';
 import { SignIn } from './dto/signin.dto';
 import { SignUp } from './dto/signup.dto';
 import { ERoles } from './interfaces/roles.interfaces';
@@ -25,11 +22,10 @@ import { ERoles } from './interfaces/roles.interfaces';
 @Injectable()
 export class AuthService {
   constructor(
-    @InjectRepository(Client)
-    private readonly clientRepository: Repository<Client>,
-
-    @InjectRepository(User) private readonly userRepository: Repository<User>,
-
+    private readonly adminClientService: AdminClientsService,
+    private readonly clientService: ClientsService,
+    private readonly injectService: InjectService,
+    private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -40,21 +36,13 @@ export class AuthService {
       );
     }
 
-    const oldUser = await this.clientRepository.findOneBy({
-      email: signUp.email,
-    });
-
-    if (oldUser) {
-      throw new BadRequestException(
-        'User with this email is already in system',
-      );
-    }
+    await this.clientService.findOldClient(signUp.email);
 
     const { email, password, username, terms } = signUp;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = this.clientRepository.create({
+    const obj = {
       username,
       email,
       password: hashedPassword,
@@ -67,55 +55,54 @@ export class AuthService {
       avatar: null,
       gender: EClientGender.OTHER,
       role: ERoles.CLIENT,
-      created_at: new Date(),
-      updated_at: new Date(),
-      lastAuth: new Date(),
+    };
+
+    const user = await this.adminClientService.saveClient(obj);
+
+    const tokens = await this.issueTokenPair({
+      email: user.email,
+      id: user.id,
     });
 
-    const tokens = await this.issueTokenPair(String(user.id));
-
-    return (
-      this.clientRepository.save(user),
-      {
-        message: 'User was created',
-        user: this.returnUserFields(user),
-        ...tokens,
-      }
-    );
+    return {
+      message: 'User was created',
+      user: this.returnUserFields(user),
+      ...tokens,
+    };
   }
 
-  async signUpAdmin(signUp: UserDto) {
-    const oldUser = await this.clientRepository.findOneBy({
-      email: signUp.email,
-    });
+  // async signUpAdmin(signUp: UserDto) {
+  //   const oldUser = await this.clientRepository.findOneBy({
+  //     email: signUp.email,
+  //   });
 
-    if (oldUser) {
-      throw new BadRequestException(
-        'User with this email is already in system',
-      );
-    }
+  //   if (oldUser) {
+  //     throw new BadRequestException(
+  //       'User with this email is already in system',
+  //     );
+  //   }
 
-    const { email, password } = signUp;
+  //   const { email, password } = signUp;
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+  //   const hashedPassword = await bcrypt.hash(password, 10);
 
-    const user = this.userRepository.create({
-      email,
-      password: hashedPassword,
-      role: ERoles[signUp.role],
-    });
+  //   const user = this.userRepository.create({
+  //     email,
+  //     password: hashedPassword,
+  //     role: ERoles[signUp.role],
+  //   });
 
-    const tokens = await this.issueTokenPair(String(user.id));
+  //   const tokens = await this.issueTokenPair(String(user.id));
 
-    return (
-      this.userRepository.save(user),
-      {
-        message: 'sign up andmin',
-        user: this.returnUserFields(user),
-        ...tokens,
-      }
-    );
-  }
+  //   return (
+  //     this.userRepository.save(user),
+  //     {
+  //       message: 'sign up andmin',
+  //       user: this.returnUserFields(user),
+  //       ...tokens,
+  //     }
+  //   );
+  // }
 
   async signIn(signIn: SignIn) {
     const client = await this.validate(signIn);
@@ -130,13 +117,12 @@ export class AuthService {
   async validate(signIn: SignIn) {
     const { email, password } = signIn;
     const user =
-      (await this.clientRepository.findOne({
-        where: { email: email },
-      })) || (await this.userRepository.findOne({ where: { email: email } }));
+      (await this.injectService.byEmail(email)) ||
+      (await this.userService.findOldUser(email));
 
     if (!user) {
       throw new UnauthorizedException(
-        'We cannot find person account with this email address',
+        'We cannot find  account with this email address',
       );
     }
 
@@ -149,11 +135,10 @@ export class AuthService {
     return user;
   }
 
-  async issueTokenPair(userId: string) {
-    const data = { id: userId };
-    const refreshToken = await this.jwtService.signAsync(data);
+  async issueTokenPair(data) {
+    const refreshToken = await this.jwtService.sign(data);
 
-    const accessToken = await this.jwtService.signAsync(data);
+    const accessToken = await this.jwtService.sign(data);
 
     return { refreshToken, accessToken };
   }
@@ -165,41 +150,8 @@ export class AuthService {
     };
   }
 
-  async changePassword(client, id) {
-    const user = await this.clientRepository.findOne({ where: { id: id } });
-
-    if (!user) {
-      throw new BadRequestException('Invalid');
-    }
-
-    const isValidPassword = await bcrypt.compare(
-      client.currentPassword,
-      user.password,
-    );
-
-    if (!isValidPassword) {
-      throw new UnauthorizedException('The current password is incorrect');
-    }
-
-    const hashedPassword = await bcrypt.hash(client.newPassword, 10);
-
-    return (
-      await this.clientRepository.update(
-        { id },
-        { password: hashedPassword, updated_at: new Date() },
-      ),
-      { message: `Your password was successfully updated` }
-    );
-  }
-
   async sendNewPassword(payload) {
-    const user = await this.clientRepository.findOne({
-      where: { email: payload.email },
-    });
-
-    if (!user) {
-      throw new BadRequestException('User is not found');
-    }
+    const client = await this.injectService.byEmail(payload.email);
 
     let generatedPassword = '';
     const characters =
@@ -214,66 +166,8 @@ export class AuthService {
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
 
     return (
-      await this.clientRepository.update(
-        { id: user.id },
-        { password: hashedPassword, updated_at: new Date() },
-      ),
+      await this.clientService.updatePassword(client.id, hashedPassword),
       { message: `here you can see your new password ${generatedPassword}` }
-    );
-  }
-
-  async addUser(data) {
-    const oldUser = await this.clientRepository.findOneBy({
-      email: data.email,
-    });
-
-    if (oldUser) {
-      throw new BadRequestException(
-        'User with this email is already in system',
-      );
-    }
-
-    const { email, password, username } = data;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    return (
-      await this.clientRepository.insert({
-        username,
-        email,
-        password: hashedPassword,
-        terms: true,
-        balance: 0.0,
-        spent: 0.0,
-        discount: 0.0,
-        rank: EClientRank.NEW,
-        status: EClientStatus.ACTIVE,
-        avatar: null,
-        gender: EClientGender.OTHER,
-        role: ERoles.CLIENT,
-        created_at: new Date(),
-        updated_at: new Date(),
-        lastAuth: new Date(),
-      }),
-      { message: 'User was successfully created' }
-    );
-  }
-
-  async updateUser(id, data) {
-    const client = await this.clientRepository.findOne({
-      where: { id: id.id },
-    });
-
-    if (!client) {
-      throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
-    }
-
-    return (
-      await this.clientRepository.update(
-        { id },
-        { username: data.username, email: data.email, updated_at: new Date() },
-      ),
-      { message: 'User  was successfully updated' }
     );
   }
 

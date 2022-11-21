@@ -1,12 +1,10 @@
 import { ClientsModule } from 'src/clients/clients.module';
-import { Client } from 'src/clients/entities/client.entity';
-import { User } from 'src/users/entities/user.entity';
+import { ClientsService } from 'src/clients/services/clients.service';
 import { UsersModule } from 'src/users/users.module';
 
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
-import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { RolesGuard } from './guards/roles.guard';
@@ -14,8 +12,6 @@ import { JwtStrategy } from './strategies/jwt.strategy';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Client]),
-    TypeOrmModule.forFeature([User]),
     UsersModule,
     ClientsModule,
     PassportModule,

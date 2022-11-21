@@ -25,38 +25,24 @@ export class AuthController {
     return await this.authService.signUp(signUp);
   }
 
-  @Post('signup-admin')
-  async signUpAdmin(@Body(ValidationPipe) signUp) {
-    return await this.authService.signUpAdmin(signUp);
-  }
+  // @Post('signup-admin')
+  // async signUpAdmin(@Body(ValidationPipe) signUp) {
+  //   return await this.authService.signUpAdmin(signUp);
+  // }
 
   @Post('signin')
   async signIn(@Body() signIn: SignIn) {
     return await this.authService.signIn(signIn);
   }
 
-  @Post('add-user')
-  async addUser(@Body() body) {
-    return await this.authService.addUser(body);
-  }
-
-  @Put(':id/update-user')
-  async updateUser(@Param('id') id, @Body() body) {
-    return await this.authService.updateUser(id, body);
-  }
-
-  @Put(':id/change-password')
-  async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
-    return await this.authService.changePassword(clientDto, id);
-  }
-  @Put('send-new-password')
-  async sendNewPassword(@Body() body: ClientDto) {
-    return await this.authService.sendNewPassword(body);
-  }
-
   @Post('admin-signin')
   async adminSignIn(@Body() signIn: SignIn) {
     return await this.authService.signIn(signIn);
+  }
+
+  @Put('send-new-password')
+  async sendNewPassword(@Body() body: ClientDto) {
+    return await this.authService.sendNewPassword(body);
   }
 
   @UseGuards(AuthGuard('jwt'))
