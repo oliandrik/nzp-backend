@@ -1,27 +1,23 @@
 import * as bcrypt from 'bcrypt';
-import { Repository } from 'typeorm';
 
 import {
   BadRequestException,
   Injectable,
   UnauthorizedException,
 } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { Client } from '../entities/client.entity';
-import { InjectService } from '../inject.service';
+import { ClientEntityService } from '../client-entity.service';
+import { EClientGender } from '../interfaces/client.interfaces';
 
 @Injectable()
 export class ClientsService {
-  constructor(
-    @InjectRepository(Client)
-    private readonly clientRepository: Repository<Client>,
-    private readonly injectClientService: InjectService,
-  ) {}
+  constructor(private readonly entityClientService: ClientEntityService) {}
 
   async findOldClient(email) {
-    const oldClient = await this.clientRepository.findOne({
-      where: { email: email },
-    });
+    const oldClient = await this.entityClientService
+      .getClientRepository()
+      .findOne({
+        where: { email: email },
+      });
 
     if (oldClient) {
       throw new BadRequestException(
@@ -33,9 +29,11 @@ export class ClientsService {
   }
 
   async byUsername(username) {
-    const client = await this.clientRepository.findOne({
-      where: { username: username },
-    });
+    const client = await this.entityClientService
+      .getClientRepository()
+      .findOne({
+        where: { username: username },
+      });
 
     if (client) {
       throw new BadRequestException(
@@ -46,17 +44,23 @@ export class ClientsService {
     return client;
   }
 
-  async changeGender(data, id) {
-    await this.injectClientService.byId(id);
+  async changeGender(gender: string, id) {
+    await this.entityClientService.byId(id);
 
-    return await this.clientRepository.update(
-      { id },
-      { gender: data.gender, updated_at: new Date() },
+    return (
+      await this.entityClientService.getClientRepository().update(
+        { id },
+        {
+          gender: EClientGender[gender.toUpperCase()],
+          updated_at: new Date(),
+        },
+      ),
+      { message: `User's gender was successfully updated` }
     );
   }
 
   async changeAvatar(avatar, id) {
-    const findUser = await this.injectClientService.byId(id);
+    const findUser = await this.entityClientService.byId(id);
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');
@@ -73,26 +77,26 @@ export class ClientsService {
     }
 
     return (
-      await this.clientRepository.update(
-        { id },
-        { avatar: avatar.avatar, updated_at: new Date() },
-      ),
+      await this.entityClientService
+        .getClientRepository()
+        .update({ id }, { avatar: avatar.avatar, updated_at: new Date() }),
       { message: 'Avatar  was successfully updated' }
     );
   }
 
   async updatePassword(id, hashedPassword) {
     return (
-      await this.clientRepository.update(
-        { id },
-        { password: hashedPassword, updated_at: new Date() },
-      ),
+      await this.entityClientService
+        .getClientRepository()
+        .update({ id }, { password: hashedPassword, updated_at: new Date() }),
       { message: 'Password  was successfully updated' }
     );
   }
 
   async changePassword(client, id) {
-    const user = await this.clientRepository.findOne({ where: { id: id } });
+    const user = await this.entityClientService.getClientRepository().findOne({
+      where: { id: id },
+    });
 
     if (!user) {
       throw new BadRequestException('Invalid');
@@ -110,10 +114,9 @@ export class ClientsService {
     const hashedPassword = await bcrypt.hash(client.newPassword, 10);
 
     return (
-      await this.clientRepository.update(
-        { id },
-        { password: hashedPassword, updated_at: new Date() },
-      ),
+      await this.entityClientService
+        .getClientRepository()
+        .update({ id }, { password: hashedPassword, updated_at: new Date() }),
       { message: `Your password was successfully updated` }
     );
   }

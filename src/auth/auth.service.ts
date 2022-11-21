@@ -1,5 +1,5 @@
 import * as bcrypt from 'bcrypt';
-import { InjectService } from 'src/clients/inject.service';
+import { ClientEntityService } from 'src/clients/client-entity.service';
 import {
   EClientGender,
   EClientRank,
@@ -26,7 +26,7 @@ export class AuthService {
   constructor(
     private readonly adminClientService: AdminClientsService,
     private readonly clientService: ClientsService,
-    private readonly injectService: InjectService,
+    private readonly ClientEntityService: ClientEntityService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
@@ -125,7 +125,7 @@ export class AuthService {
 
     const user =
       (await this.userService.byEmail(email)) ||
-      (await this.injectService.byEmail(email));
+      (await this.ClientEntityService.byEmail(email));
 
     if (!user) {
       throw new UnauthorizedException(
@@ -158,7 +158,7 @@ export class AuthService {
   }
 
   async sendNewPassword(payload) {
-    const client = await this.injectService.byEmail(payload.email);
+    const client = await this.ClientEntityService.byEmail(payload.email);
 
     if (!client) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);

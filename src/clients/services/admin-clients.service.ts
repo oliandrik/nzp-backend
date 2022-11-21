@@ -12,7 +12,7 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { ClientDto } from '../dto/client.dto';
-import { InjectService } from '../inject.service';
+import { ClientEntityService } from '../client-entity.service';
 import {
   EClientGender,
   EClientRank,
@@ -22,7 +22,7 @@ import {
 @Injectable()
 export class AdminClientsService {
   constructor(
-    private readonly injectClientService: InjectService,
+    private readonly entityClientService: ClientEntityService,
     private readonly exportFileService: ExportFilesService,
   ) {}
 
@@ -37,8 +37,9 @@ export class AdminClientsService {
     const sortByField = query.sortBy || 'created_at';
     const sortDirection = query.sortDir || 'ASC';
 
-    const [result, total] =
-      await this.injectClientService.clientRepository.findAndCount({
+    const [result, total] = await this.entityClientService
+      .getClientRepository()
+      .findAndCount({
         where: {
           username: Like('%' + keyword + '%'),
           status: EClientStatus[status.toUpperCase()],
@@ -68,7 +69,7 @@ export class AdminClientsService {
       fs.mkdirSync(dir);
     }
 
-    const res = await this.injectClientService.clientRepository.find({
+    const res = await this.entityClientService.getClientRepository().find({
       where: {
         status: In(body.status),
         created_at: Between(body.from, body.to),
@@ -108,55 +109,56 @@ export class AdminClientsService {
   }
 
   async setPassword(id, password) {
-    await this.injectClientService.byId(id);
+    await this.entityClientService.byId(id);
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return (
-      await this.injectClientService.clientRepository.update(
-        { id },
-        { password: hashedPassword, updated_at: new Date() },
-      ),
+      await this.entityClientService
+        .getClientRepository()
+        .update({ id }, { password: hashedPassword, updated_at: new Date() }),
       { message: 'Password  was successfully updated' }
     );
   }
 
   async discount(id, discount) {
-    await this.injectClientService.byId(id);
+    await this.entityClientService.byId(id);
 
     return (
-      await this.injectClientService.clientRepository.update(
-        { id },
-        { discount, updated_at: new Date() },
-      ),
+      await this.entityClientService
+        .getClientRepository()
+        .update({ id }, { discount, updated_at: new Date() }),
       { message: 'Discount  was successfully updated' }
     );
   }
 
   async changeStatus(id, status: string) {
-    await this.injectClientService.byId(id);
+    await this.entityClientService.byId(id);
 
     if (!EClientStatus[status.toUpperCase()]) {
       throw new BadRequestException('Invalid status');
     }
 
     return (
-      await this.injectClientService.clientRepository.update(
+      await this.entityClientService.getClientRepository().update(
         { id },
-        { status: EClientStatus[status.toUpperCase()], updated_at: new Date() },
+        {
+          status: EClientStatus[status.toUpperCase()],
+          updated_at: new Date(),
+        },
       ),
       { message: 'Status  was successfully updated' }
     );
   }
 
   async saveClient(@Body() data: ClientDto) {
-    const client = await this.injectClientService.clientRepository.create({
+    const client = await this.entityClientService.getClientRepository().create({
       ...data,
       created_at: new Date(),
       updated_at: new Date(),
       lastAuth: new Date(),
     });
-    return await this.injectClientService.clientRepository.save(client);
+    return await this.entityClientService.getClientRepository().save(client);
   }
 
   async addClient(data) {
@@ -167,7 +169,7 @@ export class AdminClientsService {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     return (
-      await this.injectClientService.clientRepository.insert({
+      await this.entityClientService.getClientRepository().insert({
         username,
         email,
         password: hashedPassword,
@@ -189,9 +191,11 @@ export class AdminClientsService {
   }
 
   async updateClient(id, data) {
-    const client = await this.injectClientService.clientRepository.findOne({
-      where: { id: id.id },
-    });
+    const client = await this.entityClientService
+      .getClientRepository()
+      .findOne({
+        where: { id: id.id },
+      });
 
     if (!client) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
@@ -200,22 +204,28 @@ export class AdminClientsService {
     await this.validateByEmailAndUsername(data);
 
     return (
-      await this.injectClientService.clientRepository.update(
+      await this.entityClientService.getClientRepository().update(
         { id },
-        { username: data.username, email: data.email, updated_at: new Date() },
+        {
+          username: data.username,
+          email: data.email,
+          updated_at: new Date(),
+        },
       ),
       { message: 'User  was successfully updated' }
     );
   }
 
   async validateByEmailAndUsername(data) {
-    const oldClientByEmail =
-      await this.injectClientService.clientRepository.findOneBy({
+    const oldClientByEmail = await this.entityClientService
+      .getClientRepository()
+      .findOneBy({
         email: data.email,
       });
 
-    const oldClientByUsername =
-      await this.injectClientService.clientRepository.findOneBy({
+    const oldClientByUsername = await this.entityClientService
+      .getClientRepository()
+      .findOneBy({
         username: data.username,
       });
 

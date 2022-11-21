@@ -5,11 +5,15 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Client } from './entities/client.entity';
 
 @Injectable()
-export class InjectService {
+export class ClientEntityService {
   constructor(
     @InjectRepository(Client)
-    public readonly clientRepository: Repository<Client>,
+    private readonly clientRepository: Repository<Client>,
   ) {}
+
+  getClientRepository() {
+    return this.clientRepository;
+  }
 
   async byEmail(email) {
     const client = await this.clientRepository.findOne({
