@@ -32,6 +32,20 @@ export class ClientsService {
     return oldClient;
   }
 
+  async byUsername(username) {
+    const client = await this.clientRepository.findOne({
+      where: { username: username },
+    });
+
+    if (client) {
+      throw new BadRequestException(
+        'User with this username is already in system',
+      );
+    }
+
+    return client;
+  }
+
   async changeGender(data, id) {
     await this.injectClientService.byId(id);
 

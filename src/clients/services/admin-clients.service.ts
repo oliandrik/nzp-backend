@@ -160,17 +160,7 @@ export class AdminClientsService {
   }
 
   async addClient(data) {
-    const oldClient = await this.injectClientService.clientRepository.findOneBy(
-      {
-        email: data.email,
-      },
-    );
-
-    if (oldClient) {
-      throw new BadRequestException(
-        'User with this email is already in system',
-      );
-    }
+    await this.validateByEmailAndUsername(data);
 
     const { email, password, username } = data;
 
@@ -207,6 +197,8 @@ export class AdminClientsService {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
 
+    await this.validateByEmailAndUsername(data);
+
     return (
       await this.injectClientService.clientRepository.update(
         { id },
@@ -214,5 +206,37 @@ export class AdminClientsService {
       ),
       { message: 'User  was successfully updated' }
     );
+  }
+
+  async validateByEmailAndUsername(data) {
+    const oldClientByEmail =
+      await this.injectClientService.clientRepository.findOneBy({
+        email: data.email,
+      });
+
+    const oldClientByUsername =
+      await this.injectClientService.clientRepository.findOneBy({
+        username: data.username,
+      });
+
+    if (oldClientByEmail && oldClientByUsername) {
+      throw new BadRequestException(
+        'Please enter a different email address and username',
+      );
+    }
+
+    if (oldClientByEmail) {
+      throw new BadRequestException(
+        'User with this email is already in system',
+      );
+    }
+
+    if (oldClientByUsername) {
+      throw new BadRequestException(
+        'User with this username is already in system',
+      );
+    }
+
+    return { oldClientByEmail, oldClientByUsername };
   }
 }

@@ -39,6 +39,7 @@ export class AuthService {
     }
 
     await this.clientService.findOldClient(signUp.email);
+    await this.clientService.byUsername(signUp.username);
 
     const { email, password, username, terms } = signUp;
 
