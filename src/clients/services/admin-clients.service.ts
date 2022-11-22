@@ -11,8 +11,8 @@ import {
   HttpStatus,
   Injectable,
 } from '@nestjs/common';
-import { ClientDto } from '../dto/client.dto';
 import { ClientEntityService } from '../client-entity.service';
+import { ClientDto } from '../dto/client.dto';
 import {
   EClientGender,
   EClientRank,
@@ -58,6 +58,7 @@ export class AdminClientsService {
   }
 
   async exportClientsFile(body) {
+    console.log(body, 'body');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -69,9 +70,11 @@ export class AdminClientsService {
       fs.mkdirSync(dir);
     }
 
+    const statuses: string = body.status;
+
     const res = await this.entityClientService.getClientRepository().find({
       where: {
-        status: In(body.status),
+        status: In(EClientStatus[statuses.toUpperCase()]),
         created_at: Between(body.from, body.to),
       },
     });

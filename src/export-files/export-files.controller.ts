@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Res } from '@nestjs/common';
 import { ExportFilesService } from './export-files.service';
 
 @Controller('export-files')
@@ -10,10 +10,11 @@ export class ExportFilesController {
     return await this.exportFilesService.getAllFiles();
   }
 
-  @Get('get-by/:param')
-  async getByParam(@Param('param') param: string) {
-    console.log(param, 'param');
-    return await this.exportFilesService.getBy(param);
+  @Get(':id')
+  async downloadFile(@Res() res, @Param('id') id) {
+    const file = await this.exportFilesService.byId(id);
+
+    return res.download('./src/fileToExport/' + file.filename);
   }
 
   @Delete('bulk-delete')

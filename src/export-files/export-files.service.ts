@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ExportFile } from './entities/file.entity';
 
@@ -23,6 +23,18 @@ export class ExportFilesService {
     return await this.exportFileRepository.find({
       where: { export_for: param },
     });
+  }
+
+  async byId(id) {
+    const file = await this.exportFileRepository.findOne({
+      where: { id: id },
+    });
+
+    if (!file) {
+      throw new BadRequestException('The file does not exist');
+    }
+
+    return file;
   }
 
   async bulkDelete(ids: []) {
