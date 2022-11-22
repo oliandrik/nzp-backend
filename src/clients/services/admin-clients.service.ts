@@ -58,7 +58,6 @@ export class AdminClientsService {
   }
 
   async exportClientsFile(body) {
-    console.log(body, 'body');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const fs = require('fs');
     // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -70,15 +69,24 @@ export class AdminClientsService {
       fs.mkdirSync(dir);
     }
 
-    const statuses: string = body.status;
+    const statuses = body.status;
+
+    const arr = [];
+
+    for (const value of statuses) {
+      arr.push(EClientStatus[value.toUpperCase()]);
+    }
 
     const res = await this.entityClientService.getClientRepository().find({
       where: {
-        status: In(EClientStatus[statuses.toUpperCase()]),
+        status: In(arr),
         created_at: Between(body.from, body.to),
       },
     });
 
+    if (res.length === 0) {
+      throw new BadRequestException('Nothing found');
+    }
     const writeStream = fs.createWriteStream(
       `${dir}/file_clients_${+new Date()}.${body.format}`,
     );
@@ -216,6 +224,22 @@ export class AdminClientsService {
         },
       ),
       { message: 'User  was successfully updated' }
+    );
+  }
+
+  async bulkDelete(ids: []) {
+    return (
+      await this.entityClientService.getClientRepository().delete(ids),
+      { message: 'Users were successfully deleted' }
+    );
+  }
+
+  async deleteOne(id: number) {
+    await this.entityClientService.byId(id);
+
+    return (
+      await this.entityClientService.getClientRepository().delete(id),
+      { message: 'User was successfully deleted' }
     );
   }
 

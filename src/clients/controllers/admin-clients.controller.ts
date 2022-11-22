@@ -5,6 +5,7 @@ import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -37,7 +38,7 @@ export class AdminClientsController {
   }
 
   @Post('add-user')
-  async addUser(@Body() body) {
+  async addClient(@Body() body) {
     return await this.adminClientsService.addClient(body);
   }
 
@@ -47,7 +48,7 @@ export class AdminClientsController {
   }
 
   @Put(':id/update-user')
-  async updateUser(@Param('id') id, @Body() body) {
+  async updateClient(@Param('id') id, @Body() body) {
     return await this.adminClientsService.updateClient(id, body);
   }
 
@@ -64,5 +65,15 @@ export class AdminClientsController {
   @Put(':id/set-status')
   async changeStatus(@Param('id') id, @Body() body) {
     return await this.adminClientsService.changeStatus(id, body.status);
+  }
+
+  @Delete('bulk-delete')
+  async bulkDelete(@Body() body) {
+    return await this.adminClientsService.bulkDelete(body.ids);
+  }
+
+  @Delete(':id')
+  async deleteClient(@Param('id') id) {
+    return await this.adminClientsService.deleteOne(id);
   }
 }
