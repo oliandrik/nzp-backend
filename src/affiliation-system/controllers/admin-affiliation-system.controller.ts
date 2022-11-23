@@ -7,36 +7,35 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { AffiliateSystemService } from './affiliate-system.service';
-import { AffiliateSystemDto } from './dto/affiliate-system.dto';
-import { AffiliateSystem } from './entities/affiliate-system.entity';
+import { AdminAffiliationSystem } from '../entities/admin-affiliate-system.entity';
+
+import { AdminAffiliateSystemService } from '../services/admin-affiliation-system.service';
 
 @Controller('affiliate-system')
-export class AffiliateSystemController {
+export class AdminAffiliationSystemController {
   constructor(
-    private readonly affiliateSystemService: AffiliateSystemService,
+    private readonly affiliateSystemService: AdminAffiliateSystemService,
   ) {}
 
   @Get()
-  async getAllAffiliateSystems(): Promise<AffiliateSystem[]> {
+  async getAllAffiliateSystems(): Promise<AdminAffiliationSystem[]> {
     return await this.affiliateSystemService.findAll();
   }
 
   @Get(':id')
-  async getAffiliateSystemById(@Param('id') id): Promise<AffiliateSystem> {
+  async getAffiliateSystemById(
+    @Param('id') id,
+  ): Promise<AdminAffiliationSystem> {
     return await this.affiliateSystemService.byId(id);
   }
 
   @Post()
-  async createAffiliateSystem(@Body() body: AffiliateSystemDto) {
+  async createAffiliateSystem(@Body() body) {
     return await this.affiliateSystemService.create(body);
   }
 
   @Put(':id')
-  async updateAffiliateSystem(
-    @Param('id') id,
-    @Body() body: AffiliateSystemDto,
-  ) {
+  async updateAffiliateSystem(@Param('id') id, @Body() body) {
     return await this.affiliateSystemService.update(id, body);
   }
 

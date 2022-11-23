@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AffiliateSystemModule } from './affiliate-system/affiliate-system.module';
-import { AffiliateSystem } from './affiliate-system/entities/affiliate-system.entity';
+import { AffiliationSystemModule } from './affiliation-system/affiliation-system.module';
+import { AdminAffiliationSystem } from './affiliation-system/entities/admin-affiliate-system.entity';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
@@ -60,7 +60,7 @@ import { ServicesModule } from './services/services.module';
         Order,
         GeneralSetting,
         Bonus,
-        AffiliateSystem,
+        AdminAffiliationSystem,
         AverageTime,
         MultiCurrency,
         Provider,
@@ -79,7 +79,7 @@ import { ServicesModule } from './services/services.module';
     OrdersModule,
     GeneralSettingsModule,
     BonusesModule,
-    AffiliateSystemModule,
+    AffiliationSystemModule,
     PaymentToClientModule,
     AverageTimeModule,
     MultiCurrencyModule,

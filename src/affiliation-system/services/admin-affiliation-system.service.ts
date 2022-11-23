@@ -2,21 +2,20 @@ import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { AffiliateSystemDto } from './dto/affiliate-system.dto';
-import { AffiliateSystem } from './entities/affiliate-system.entity';
+import { AdminAffiliationSystem } from '../entities/admin-affiliate-system.entity';
 
 @Injectable()
-export class AffiliateSystemService {
+export class AdminAffiliateSystemService {
   constructor(
-    @InjectRepository(AffiliateSystem)
-    private readonly affiliateSystemRepository: Repository<AffiliateSystem>,
+    @InjectRepository(AdminAffiliationSystem)
+    private readonly affiliateSystemRepository: Repository<AdminAffiliationSystem>,
   ) {}
 
-  async findAll(): Promise<AffiliateSystem[]> {
+  async findAll(): Promise<AdminAffiliationSystem[]> {
     return await this.affiliateSystemRepository.find();
   }
 
-  async byId(id): Promise<AffiliateSystem> {
+  async byId(id): Promise<AdminAffiliationSystem> {
     const affiliateSystem = await this.affiliateSystemRepository.findOne({
       where: { id: id },
     });
@@ -28,18 +27,18 @@ export class AffiliateSystemService {
     return affiliateSystem;
   }
 
-  async create(body: AffiliateSystemDto) {
+  async create(body) {
     return (
       await this.affiliateSystemRepository.insert({
         ...body,
         created_at: new Date(),
         updated_at: new Date(),
       }),
-      { message: 'Affiliate system was successfully created' }
+      { message: 'Affiliation system was successfully created' }
     );
   }
 
-  async update(id: number, body: AffiliateSystemDto) {
+  async update(id: number, body) {
     await this.byId(id);
 
     return (
@@ -47,7 +46,7 @@ export class AffiliateSystemService {
         { id },
         { ...body, updated_at: new Date() },
       ),
-      { message: 'Affiliate system  was successfully updated' }
+      { message: 'Affiliation system  was successfully updated' }
     );
   }
 
@@ -56,14 +55,14 @@ export class AffiliateSystemService {
 
     return (
       await this.affiliateSystemRepository.delete(id),
-      { message: 'Affiliate system was successfully deleted' }
+      { message: 'Affiliation system was successfully deleted' }
     );
   }
 
   async bulkDelete(ids: []) {
     return (
       await this.affiliateSystemRepository.delete(ids),
-      { message: 'Affiliate systems were successfully deleted' }
+      { message: 'Affiliation systems were successfully deleted' }
     );
   }
 }

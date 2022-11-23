@@ -2,8 +2,8 @@ import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
 
 import { EApprovePayouts } from '../interfaces/affiliate-system.interfaces';
 
-@Entity({ name: 'affiliate_system' })
-export class AffiliateSystem {
+@Entity({ name: 'admin_affiliation_system' })
+export class AdminAffiliationSystem {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
