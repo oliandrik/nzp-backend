@@ -1,6 +1,6 @@
 import { Repository } from 'typeorm';
 
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { ClientAffiliationSystem } from '../entities/client-affiliate-system.entity';
 
@@ -8,6 +8,29 @@ import { ClientAffiliationSystem } from '../entities/client-affiliate-system.ent
 export class ClientAffiliateSystemService {
   constructor(
     @InjectRepository(ClientAffiliationSystem)
-    private readonly affiliateSystemRepository: Repository<ClientAffiliationSystem>,
+    private readonly affiliationSystemRepository: Repository<ClientAffiliationSystem>,
   ) {}
+
+  async byCode(param) {
+    const code = await this.affiliationSystemRepository.findOne({
+      where: {
+        code: param,
+      },
+    });
+
+    if (code) {
+      throw new BadRequestException('Enter other code');
+    }
+
+    return code;
+  }
+
+  async setCode(id, code) {
+    await this.byCode(code);
+
+    return await this.affiliationSystemRepository.update(
+      { id: id },
+      { code, updated_at: new Date() },
+    );
+  }
 }
