@@ -93,6 +93,10 @@ export class AdminClientsService {
 
     const newFile = await this.exportFileService.getRepository().create({
       filename: `file_clients_${+new Date()}.${body.format}`,
+      fromDate: body.from,
+      toDate: body.to,
+      status: body.status.length === 3 ? 'ALL' : body.status.toString(),
+      format: body.format,
       export_for: 'clients',
       created_at: new Date(),
     });

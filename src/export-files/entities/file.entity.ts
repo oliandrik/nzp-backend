@@ -9,6 +9,18 @@ export class ExportFile {
   filename: string;
 
   @Column()
+  fromDate: string;
+
+  @Column()
+  toDate: string;
+
+  @Column()
+  status: string;
+
+  @Column()
+  format: string;
+
+  @Column()
   export_for: string;
 
   @Column()
