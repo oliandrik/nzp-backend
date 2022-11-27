@@ -1,7 +1,9 @@
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
 import { Repository } from 'typeorm';
 
 import { BadRequestException, Body, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserDto } from './dto/user.dto';
 import { User } from './entities/user.entity';
 
 @Injectable()
@@ -37,12 +39,11 @@ export class UsersService {
     return oldUser;
   }
 
-  async saveUser(@Body() data) {
+  async saveUser(@Body() data: UserDto) {
     const client = await this.userRepository.create({
-      ...data,
-      created_at: new Date(),
-      updated_at: new Date(),
-      lastAuth: new Date(),
+      email: data.email,
+      password: data.password,
+      role: ERoles.ADMIN,
     });
     return await this.userRepository.save(client);
   }

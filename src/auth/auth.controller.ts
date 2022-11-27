@@ -24,10 +24,10 @@ export class AuthController {
     return await this.authService.signUp(signUp);
   }
 
-  // @Post('signup-admin')
-  // async signUpAdmin(@Body(ValidationPipe) signUp) {
-  //   return await this.authService.signUpAdmin(signUp);
-  // }
+  @Post('signup-admin')
+  async signUpAdmin(@Body(ValidationPipe) signUp) {
+    return await this.authService.signUpAdmin(signUp);
+  }
 
   @Post('signin')
   async signIn(@Body() signIn: SignIn) {

@@ -7,6 +7,7 @@ import {
 } from 'src/clients/interfaces/client.interfaces';
 import { AdminClientsService } from 'src/clients/services/admin-clients.service';
 import { ClientsService } from 'src/clients/services/clients.service';
+import { UserDto } from 'src/users/dto/user.dto';
 import { UsersService } from 'src/users/users.service';
 
 import {
@@ -74,38 +75,26 @@ export class AuthService {
     };
   }
 
-  // async signUpAdmin(signUp: UserDto) {
-  //   const oldUser = await this.clientRepository.findOneBy({
-  //     email: signUp.email,
-  //   });
+  async signUpAdmin(signUp: UserDto) {
+    const { email, password } = signUp;
 
-  //   if (oldUser) {
-  //     throw new BadRequestException(
-  //       'User with this email is already in system',
-  //     );
-  //   }
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-  //   const { email, password } = signUp;
+    const obj = { email, password: hashedPassword, role: ERoles.ADMIN };
 
-  //   const hashedPassword = await bcrypt.hash(password, 10);
+    const user = await this.userService.saveUser(obj);
 
-  //   const user = this.userRepository.create({
-  //     email,
-  //     password: hashedPassword,
-  //     role: ERoles[signUp.role],
-  //   });
+    const tokens = await this.issueTokenPair({
+      email: user.email,
+      id: user.id,
+    });
 
-  //   const tokens = await this.issueTokenPair(String(user.id));
-
-  //   return (
-  //     this.userRepository.save(user),
-  //     {
-  //       message: 'sign up andmin',
-  //       user: this.returnUserFields(user),
-  //       ...tokens,
-  //     }
-  //   );
-  // }
+    return {
+      message: 'User was created',
+      user: this.returnUserFields(user),
+      ...tokens,
+    };
+  }
 
   async signIn(signIn: SignIn) {
     const client = await this.validate(signIn);
