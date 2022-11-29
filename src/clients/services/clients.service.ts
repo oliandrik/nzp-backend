@@ -6,6 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ClientEntityService } from '../client-entity.service';
+import { Client } from '../entities/client.entity';
 import { EClientGender } from '../interfaces/client.interfaces';
 
 @Injectable()
@@ -119,5 +120,13 @@ export class ClientsService {
         .update({ id }, { password: hashedPassword, updated_at: new Date() }),
       { message: `Your password was successfully updated` }
     );
+  }
+
+  async referral(body, userId) {
+    return await this.entityClientService.getReferralSystemRepository().insert({
+      referral_link: body.referral_link,
+      client: { id: body.clientId } as Client,
+      created_at: new Date(),
+    });
   }
 }

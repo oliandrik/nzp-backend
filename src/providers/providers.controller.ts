@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { ProviderDto } from './dto/provider.dto';
 import { ProvidersService } from './providers.service';
 
@@ -9,6 +17,11 @@ export class ProvidersController {
   @Post()
   async createProvider(@Body() body: ProviderDto) {
     return await this.providersService.create(body);
+  }
+
+  @Get()
+  async getProviders() {
+    return await this.providersService.findAll();
   }
 
   @Put(':id')

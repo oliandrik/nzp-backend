@@ -13,6 +13,7 @@ import { Bonus } from './bonuses/entities/bonus.entity';
 import { ChatModule } from './chat/chat.module';
 import { ClientsModule } from './clients/clients.module';
 import { Client } from './clients/entities/client.entity';
+import { ReferralSystem } from './clients/entities/referral-system.entity';
 import { ExportFile } from './export-files/entities/file.entity';
 import { ExportFilesModule } from './export-files/export-files.module';
 import { GeneralSetting } from './general-settings/entities/general-settings.entity';
@@ -53,6 +54,7 @@ import { ServicesModule } from './services/services.module';
       entities: [
         User,
         Client,
+        ReferralSystem,
         ServiceCategory,
         Service,
         PaymentMethod,

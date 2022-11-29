@@ -4,6 +4,7 @@ import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { RolesGuard } from 'src/auth/guards/roles.guard';
 import { ERoles } from 'src/auth/interfaces/roles.interfaces';
+import { Repository } from 'typeorm';
 
 import {
   BadRequestException,
@@ -11,6 +12,7 @@ import {
   Controller,
   Get,
   Param,
+  Post,
   Put,
   Res,
   UploadedFile,
@@ -19,8 +21,8 @@ import {
 } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { ClientDto } from '../dto/client.dto';
 import { ClientEntityService } from '../client-entity.service';
+import { ClientDto } from '../dto/client.dto';
 import { EClientGender } from '../interfaces/client.interfaces';
 
 import { ClientsService } from '../services/clients.service';
@@ -87,5 +89,11 @@ export class ClientsController {
   @Put(':id/change-password')
   async changePassword(@Body() clientDto: ClientDto, @Param('id') id: number) {
     return await this.clientsService.changePassword(clientDto, id);
+  }
+
+  @Post('create-ref-link')
+  async referral(@Body() body, @CurrentUser() user) {
+    console.log(user, 'current user', user.id);
+    return await this.clientsService.referral(body, user.id);
   }
 }
