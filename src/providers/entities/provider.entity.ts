@@ -11,10 +11,10 @@ export class Provider {
   @Column()
   provider_url: string;
 
-  @Column()
+  @Column({ default: null })
   alias: string;
 
-  @Column()
+  @Column({ default: 0 })
   balance: number;
 
   @Column()
