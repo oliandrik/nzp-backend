@@ -1,4 +1,11 @@
-import { Column, Entity, OneToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  ManyToOne,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 
 import { Client } from './client.entity';
 
@@ -10,7 +17,8 @@ export class ReferralSystem {
   @Column()
   referral_link: string;
 
-  @OneToOne(() => Client)
+  @OneToOne(() => Client, (client) => client.referral)
+  @JoinColumn()
   client: Client;
 
   @Column()

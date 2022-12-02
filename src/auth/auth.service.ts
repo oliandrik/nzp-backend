@@ -1,5 +1,7 @@
 import * as bcrypt from 'bcrypt';
 import { ClientEntityService } from 'src/clients/client-entity.service';
+import { Client } from 'src/clients/entities/client.entity';
+import { ReferralSystem } from 'src/clients/entities/referral-system.entity';
 import {
   EClientGender,
   EClientRank,
@@ -32,15 +34,22 @@ export class AuthService {
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(signUp: SignUp) {
+  async signUp(signUp: SignUp, query) {
+    await this.clientService.findOldClient(signUp.email);
+    await this.clientService.byUsername(signUp.username);
+
     if (!signUp.terms) {
       throw new BadRequestException(
         'to Register you need to agree to the privacy policy',
       );
     }
 
-    await this.clientService.findOldClient(signUp.email);
-    await this.clientService.byUsername(signUp.username);
+    let parentId = null;
+
+    if (Object.keys(query).length > 0) {
+      const ref = await this.clientService.findReferral(Object.values(query));
+      parentId = ref.client;
+    }
 
     const { email, password, username, terms } = signUp;
 
@@ -59,6 +68,7 @@ export class AuthService {
       avatar: null,
       gender: EClientGender.OTHER,
       role: ERoles.CLIENT,
+      parent_id: parentId as Client,
     };
 
     const user = await this.adminClientService.saveClient(obj);

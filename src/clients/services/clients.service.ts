@@ -125,8 +125,23 @@ export class ClientsService {
   async referral(body, userId) {
     return await this.entityClientService.getReferralSystemRepository().insert({
       referral_link: body.referral_link,
-      client: { id: body.clientId } as Client,
+      client: { id: userId } as Client,
       created_at: new Date(),
     });
+  }
+
+  async findReferral(link) {
+    const referral = await this.entityClientService
+      .getReferralSystemRepository()
+      .findOne({
+        where: { referral_link: link },
+        loadRelationIds: true,
+      });
+
+    if (!referral) {
+      throw new BadRequestException('Invalid');
+    }
+
+    return referral;
   }
 }

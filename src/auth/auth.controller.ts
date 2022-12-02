@@ -6,6 +6,7 @@ import {
   Get,
   Post,
   Put,
+  Query,
   Request,
   UseGuards,
   ValidationPipe,
@@ -20,8 +21,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body(ValidationPipe) signUp: SignUp) {
-    return await this.authService.signUp(signUp);
+  async signUp(@Body(ValidationPipe) signUp: SignUp, @Query() query) {
+    return await this.authService.signUp(signUp, query);
   }
 
   @Post('signup-admin')
