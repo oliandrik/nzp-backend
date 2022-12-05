@@ -1,4 +1,4 @@
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import {
   BadRequestException,
@@ -16,8 +16,19 @@ export class ProvidersService {
     private readonly providerRepository: Repository<Provider>,
   ) {}
 
-  async findAll() {
-    return await this.providerRepository.find();
+  async findAll(query) {
+    const keyword = query.keyword || '';
+
+    const [result, total] = await this.providerRepository.findAndCount({
+      where: {
+        provider_name: Like('%' + keyword + '%'),
+      },
+    });
+
+    return {
+      data: result,
+      total: total,
+    };
   }
 
   async byId(id) {

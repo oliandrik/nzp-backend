@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ProviderDto } from './dto/provider.dto';
 import { ProvidersService } from './providers.service';
@@ -20,8 +21,8 @@ export class ProvidersController {
   }
 
   @Get()
-  async getProviders() {
-    return await this.providersService.findAll();
+  async getProviders(@Query() query) {
+    return await this.providersService.findAll(query);
   }
 
   @Put(':id')
