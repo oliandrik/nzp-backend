@@ -78,6 +78,7 @@ export class AdminClientsService {
     }
 
     const res = await this.entityClientService.getClientRepository().find({
+      select: { ...body.selectFields },
       where: {
         status: In(arr),
         created_at: Between(body.from, body.to),
@@ -87,6 +88,7 @@ export class AdminClientsService {
     if (res.length === 0) {
       throw new BadRequestException('Nothing found');
     }
+
     const writeStream = fs.createWriteStream(
       `${dir}/file_clients_${+new Date()}.${body.format}`,
     );
