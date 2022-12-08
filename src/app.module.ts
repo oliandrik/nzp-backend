@@ -27,6 +27,7 @@ import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { PaymentToClientModule } from './payment-to-client/payment-to-client.module';
 import { Provider } from './providers/entities/provider.entity';
 import { ProvidersModule } from './providers/providers.module';
+import { StripeModule } from './stripe/stripe.module';
 import { Ticket } from './tickets/entities/ticket.entity';
 import { TicketsModule } from './tickets/tickets.module';
 import { Update } from './updates/entities/updates.entity';
@@ -36,6 +37,7 @@ import { UsersModule } from './users/users.module';
 
 import { ServiceCategory } from './service-categories/entities/service-categories.entity';
 import { ServiceCategoriesModule } from './service-categories/service-categories.module';
+import { InternalService } from './services/entities/internal-service.entity';
 import { Service } from './services/entities/service.entity';
 import { ServicesModule } from './services/services.module';
 
@@ -57,6 +59,7 @@ import { ServicesModule } from './services/services.module';
         ReferralSystem,
         ServiceCategory,
         Service,
+        InternalService,
         PaymentMethod,
         ExportFile,
         Order,
@@ -89,6 +92,7 @@ import { ServicesModule } from './services/services.module';
     TicketsModule,
     ChatModule,
     UpdatesModule,
+    StripeModule,
   ],
   controllers: [AppController],
   providers: [AppService],

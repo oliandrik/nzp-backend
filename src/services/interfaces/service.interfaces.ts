@@ -3,21 +3,6 @@ export enum EServiceMode {
   MANUAL = 2,
 }
 
-export enum EServiceDripFeed {
-  ALLOWED = 1,
-  DISALLOWED = 2,
-}
-
-export enum EServiceCancel {
-  ALLOWED = 1,
-  DISALLOWED = 2,
-}
-
-export enum EServiceLinkDuplicate {
-  ACCEPT = 1,
-  DENY = 2,
-}
-
 export enum EServiceStatus {
   ENABLED = 1,
   DISABLED = 2,

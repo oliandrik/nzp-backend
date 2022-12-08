@@ -1,11 +1,16 @@
 import { Provider } from 'src/providers/entities/provider.entity';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-
 import {
-  EServiceCancel,
-  EServiceDripFeed,
-  EServiceLinkDuplicate,
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+
+import { InternalService } from './internal-service.entity';
+import {
   EServiceMode,
   EServiceStatus,
   EServiceType,
@@ -34,14 +39,15 @@ export class Service {
   @ManyToOne(() => Provider)
   provider: Provider;
 
-  // @Column()
-  // provider_service: null;
+  @OneToOne(() => InternalService)
+  @JoinColumn()
+  internal_project: InternalService;
 
-  @Column({ type: 'enum', enum: EServiceDripFeed })
-  drip_feed: EServiceDripFeed;
+  @Column({ default: true })
+  dripfeed: boolean;
 
-  @Column({ type: 'enum', enum: EServiceCancel })
-  cancel: EServiceCancel;
+  @Column()
+  cancel: boolean;
 
   @Column()
   rate_per: number;
@@ -52,8 +58,8 @@ export class Service {
   @Column()
   max_order: number;
 
-  @Column({ type: 'enum', enum: EServiceLinkDuplicate })
-  link_duplicate: EServiceLinkDuplicate;
+  @Column({ default: true })
+  link_duplicate: boolean;
 
   @Column()
   increment: number;

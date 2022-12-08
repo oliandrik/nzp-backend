@@ -1,10 +1,8 @@
 import { Provider } from 'src/providers/entities/provider.entity';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 
+import { InternalService } from '../entities/internal-service.entity';
 import {
-  EServiceCancel,
-  EServiceDripFeed,
-  EServiceLinkDuplicate,
   EServiceMode,
   EServiceStatus,
   EServiceType,
@@ -17,13 +15,13 @@ export class ServiceDto {
   mode: EServiceMode;
   type: EServiceType;
   provider: Provider;
-  // provider_service: null;
-  drip_feed: EServiceDripFeed;
-  cancel: EServiceCancel;
+  internal_project: InternalService;
+  dripfeed: boolean;
+  cancel: boolean;
   rate_per: number;
   min_order: number;
   max_order: number;
-  link_duplicate: EServiceLinkDuplicate;
+  link_duplicate: boolean;
   increment: number;
   overflow: number;
   status: EServiceStatus;

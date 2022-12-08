@@ -41,8 +41,11 @@ export class ServicesController {
     return await this.servicesService.getSelectedInfoProviders(body.providers);
   }
 
-  @Get('get-services-from-provider')
+  @Post('get-services-from-provider')
   async getServicesFromProvider(@Body() body) {
+    if (Object.keys(body).length === 0) {
+      throw new BadRequestException('Error');
+    }
     return await this.servicesService.getServicesFromProvider(body.provider);
   }
 
