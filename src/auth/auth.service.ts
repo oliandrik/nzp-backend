@@ -44,16 +44,16 @@ export class AuthService {
       );
     }
 
-    let parentId = null;
+    let ref;
 
     if (Object.keys(query).length > 0) {
-      const ref = await this.clientService.findReferral(Object.values(query));
-      parentId = ref.client;
+      ref = await this.clientService.findReferral(Object.values(query));
     }
 
     const { email, password, username, terms } = signUp;
 
     const hashedPassword = await bcrypt.hash(password, 10);
+    const parentId = ref.client;
 
     const obj = {
       username,
@@ -68,7 +68,7 @@ export class AuthService {
       avatar: null,
       gender: EClientGender.OTHER,
       role: ERoles.CLIENT,
-      parent_id: parentId as Client,
+      parent: ({ id: parentId } as Client) || null,
     };
 
     const user = await this.adminClientService.saveClient(obj);

@@ -1,11 +1,5 @@
 import { ERoles } from 'src/auth/interfaces/roles.interfaces';
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  ManyToOne,
-  OneToOne,
-} from 'typeorm';
+import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 
 import { ReferralSystem } from './referral-system.entity';
 import {
@@ -54,9 +48,6 @@ export class Client {
 
   @Column({ type: 'enum', enum: ERoles })
   role: ERoles;
-
-  @OneToOne(() => ReferralSystem, (referral) => referral.client)
-  referral: ReferralSystem;
 
   @ManyToOne(() => ReferralSystem)
   parent: ReferralSystem;

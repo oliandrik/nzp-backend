@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   JoinColumn,
-  ManyToOne,
   OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -17,7 +16,7 @@ export class ReferralSystem {
   @Column()
   referral_link: string;
 
-  @OneToOne(() => Client, (client) => client.referral)
+  @OneToOne(() => Client)
   @JoinColumn()
   client: Client;
 
