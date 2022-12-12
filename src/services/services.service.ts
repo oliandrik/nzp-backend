@@ -2,7 +2,7 @@ import { Provider } from 'src/providers/entities/provider.entity';
 import { ProvidersService } from 'src/providers/providers.service';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { UpdatesService } from 'src/updates/updates.service';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 
 import { HttpService } from '@nestjs/axios';
 import {
@@ -34,14 +34,17 @@ export class ServicesService {
     private readonly httpService: HttpService,
   ) {}
 
-  async findAll() {
-    return await this.serviceRepository.find({
+  async findAll(query) {
+    const keyword = query.keyword || '';
+    const status: string = query.status || '';
+    const type: string = query.type || '';
+
+    const [result, total] = await this.serviceRepository.findAndCount({
       relations: {
         provider: true,
         category: true,
         internal_project: true,
       },
-
       select: {
         provider: {
           id: true,
@@ -56,7 +59,17 @@ export class ServicesService {
           service: true,
         },
       },
+      where: {
+        service_name: Like('%' + keyword + '%'),
+        status: EServiceStatus[status.toUpperCase()],
+        type: EServiceType[type.toUpperCase()],
+      },
     });
+
+    return {
+      data: result,
+      total: total,
+    };
   }
 
   async byId(id) {
@@ -72,22 +85,6 @@ export class ServicesService {
     }
 
     return categoryId;
-  }
-
-  async selectByStatus(status: string) {
-    return await this.serviceRepository.find({
-      where: { status: EServiceStatus[status] },
-    });
-  }
-
-  async selectByType(param) {
-    return await this.serviceRepository.find({ where: { type: param } });
-  }
-
-  async getSelectedInfoProviders(providers: []) {
-    return await this.serviceRepository.findBy({
-      provider: In(providers),
-    });
   }
 
   async getServicesFromProvider(param) {
@@ -178,48 +175,13 @@ export class ServicesService {
     { message: 'Service was successfully duplicated' });
   }
 
-  async updateService(id, service) {
-    const foundService = await this.byId(id);
-
-    const oldService = {
-      service: { id: id } as Service,
-
-      old_status: foundService.status,
-      new_status: service.status,
-
-      old_rate_per: foundService.rate_per,
-
-      new_rate_per:
-        service.rate_per !== undefined
-          ? service.rate_per
-          : foundService.rate_per,
-    };
-
-    if (
-      oldService.old_status !== oldService.new_status &&
-      oldService.old_rate_per == oldService.new_rate_per
-    ) {
-      await this.updService.create(
-        oldService,
-        EServiceStatus[oldService.new_status],
-      );
-    }
-
-    if (
-      oldService.old_status == oldService.new_status &&
-      oldService.old_rate_per !== oldService.new_rate_per
-    ) {
-      const mark =
-        oldService.old_rate_per < oldService.new_rate_per
-          ? 'increased'
-          : 'decreased';
-      await this.updService.create(oldService, mark);
-    }
+  async updateService(id, body) {
+    await this.byId(id);
 
     return (
       await this.serviceRepository.update(
         { id },
-        { ...service, updated_at: new Date() },
+        { ...body, updated_at: new Date() },
       ),
       { message: 'Service was successfully updated' }
     );

@@ -1,3 +1,7 @@
+import { Roles } from 'src/auth/decorators/roles.decorator';
+import { RolesGuard } from 'src/auth/guards/roles.guard';
+import { ERoles } from 'src/auth/interfaces/roles.interfaces';
+
 import {
   BadRequestException,
   Body,
@@ -7,38 +11,24 @@ import {
   Param,
   Post,
   Put,
+  Query,
+  UseGuards,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { ServiceDto } from './dto/service.dto';
 import { EServiceStatus } from './interfaces/service.interfaces';
 
 import { ServicesService } from './services.service';
 
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(ERoles.ADMIN)
 @Controller('services')
 export class ServicesController {
   constructor(private readonly servicesService: ServicesService) {}
 
   @Get()
-  async findAll() {
-    return await this.servicesService.findAll();
-  }
-
-  @Get('select-by-status/:status')
-  async selectByStatus(@Param('status') status) {
-    if (!EServiceStatus[status.toUpperCase()]) {
-      throw new BadRequestException('Invalid status');
-    }
-
-    return await this.servicesService.selectByStatus(status);
-  }
-
-  @Get('select-by-type/:type')
-  async selectByType(@Param('type') type) {
-    return await this.servicesService.selectByType(type);
-  }
-
-  @Get('providers')
-  async getSelectedInfoProviders(@Body() body) {
-    return await this.servicesService.getSelectedInfoProviders(body.providers);
+  async findAll(@Query() query) {
+    return await this.servicesService.findAll(query);
   }
 
   @Post('get-services-from-provider')
@@ -60,8 +50,8 @@ export class ServicesController {
   }
 
   @Put(':id')
-  async updateService(@Param('id') id, @Body() service: ServiceDto) {
-    return await this.servicesService.updateService(id, service);
+  async updateService(@Param('id') id, @Body() body: ServiceDto) {
+    return await this.servicesService.updateService(id, body);
   }
 
   @Put(':id/change-status')

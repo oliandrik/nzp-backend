@@ -7,9 +7,11 @@ import {
   Injectable,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { ServiceCategoryDto } from './dto/service-categories.dto';
 import { ServiceCategory } from './entities/service-categories.entity';
-import { ECategoryStatus } from './interfaces/service-categories.interfaces';
+import {
+  ECategoryPosition,
+  ECategoryStatus,
+} from './interfaces/service-categories.interfaces';
 
 @Injectable()
 export class ServiceCategoriesService {
@@ -18,7 +20,7 @@ export class ServiceCategoriesService {
     private readonly serviceCategoryRepository: Repository<ServiceCategory>,
   ) {}
 
-  async getAllServiceCategories() {
+  async findAll() {
     return await this.serviceCategoryRepository.find();
   }
 
@@ -48,35 +50,46 @@ export class ServiceCategoriesService {
     return categoryId;
   }
 
-  async createServiceCategory(category: ServiceCategoryDto, icon) {
-    await this.byName(category.category_name);
+  async create(body, icon) {
+    await this.byName(body.category_name);
 
-    return await this.serviceCategoryRepository.insert({
-      category_name: category.category_name,
-      position: category.position,
-      status:
-        Math.random() < 0.5
-          ? ECategoryStatus.ENABLED
-          : ECategoryStatus.DISABLED,
-      icon: icon,
-      created_at: new Date(),
-      updated_at: new Date(),
-    });
+    const position: string = body.position.toUpperCase();
+    const status: string = body.status.toUpperCase();
+    return (
+      await this.serviceCategoryRepository.insert({
+        category_name: body.category_name,
+        position: ECategoryPosition[position],
+        status: ECategoryStatus[status],
+        icon: icon,
+        created_at: new Date(),
+        updated_at: new Date(),
+      }),
+      { message: 'Service category was created' }
+    );
   }
 
-  async updateServiceCategory(id, updInfo) {
+  async update(id, body, icon) {
     await this.byId(id);
+
+    const position: string = body.position.toUpperCase();
+    const status: string = body.status.toUpperCase();
 
     return (
       await this.serviceCategoryRepository.update(
         { id },
-        { ...updInfo, updated_at: new Date() },
+        {
+          ...body,
+          position: ECategoryPosition[position],
+          status: ECategoryStatus[status],
+          icon: icon,
+          updated_at: new Date(),
+        },
       ),
       { message: 'Service category was updated' }
     );
   }
 
-  async deleteServiceCategory(id) {
+  async delete(id) {
     await this.byId(id);
 
     return (
