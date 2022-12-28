@@ -72,19 +72,47 @@ export class ServicesService {
     };
   }
 
+  async findOne(id) {
+    await this.byId(id);
+
+    const service = await this.serviceRepository.findOne({
+      relations: {
+        provider: true,
+        category: true,
+        internal_project: true,
+      },
+      select: {
+        provider: {
+          id: true,
+          provider_name: true,
+        },
+        category: {
+          id: true,
+          category_name: true,
+        },
+        internal_project: {
+          id: true,
+          service: true,
+        },
+      },
+      where: {
+        id: id,
+      },
+    });
+
+    return service;
+  }
+
   async byId(id) {
-    const categoryId = await this.serviceRepository.findOne({
+    const serviceId = await this.serviceRepository.findOne({
       where: { id: id },
     });
 
-    if (!categoryId) {
-      throw new HttpException(
-        "This category isn't exists",
-        HttpStatus.FORBIDDEN,
-      );
+    if (!serviceId) {
+      throw new HttpException("This service isn't exist", HttpStatus.FORBIDDEN);
     }
 
-    return categoryId;
+    return serviceId;
   }
 
   async getServicesFromProvider(param) {
@@ -178,10 +206,35 @@ export class ServicesService {
   async updateService(id, body) {
     await this.byId(id);
 
+    const oldService = await this.findOne(id);
+
+    console.log(oldService, 'service');
+    const mode: string = body.service.mode.toUpperCase();
+
+    let internalService;
+    let internalServiceId;
+
     return (
       await this.serviceRepository.update(
         { id },
-        { ...body, updated_at: new Date() },
+        {
+          ...body,
+          category: { id: body.service.categoryId } as ServiceCategory,
+          provider: { id: body.service.providerId } as Provider,
+          internal_project:
+            EServiceMode[mode] === EServiceMode.AUTO
+              ? ({
+                  id: internalServiceId,
+                } as InternalService)
+              : null,
+          mode: EServiceMode[body.service.mode.toUpperCase()],
+          status: EServiceStatus[body.service.status.toUpperCase()],
+          type:
+            EServiceMode[mode] === EServiceMode.MANUAL
+              ? EServiceType[body.service.type.toUpperCase()]
+              : EServiceType[body.internalService.type.toUpperCase],
+          updated_at: new Date(),
+        },
       ),
       { message: 'Service was successfully updated' }
     );

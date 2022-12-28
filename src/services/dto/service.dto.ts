@@ -11,6 +11,7 @@ import {
 export class ServiceDto {
   id: bigint;
   service_name: string;
+  description: string;
   category: ServiceCategory;
   mode: EServiceMode;
   type: EServiceType;

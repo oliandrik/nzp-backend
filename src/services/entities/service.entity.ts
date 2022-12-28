@@ -24,6 +24,9 @@ export class Service {
   @Column()
   service_name: string;
 
+  @Column({ type: 'text', default: null })
+  description: string;
+
   @ManyToOne(() => ServiceCategory)
   category: ServiceCategory;
 

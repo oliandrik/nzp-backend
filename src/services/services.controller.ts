@@ -31,6 +31,12 @@ export class ServicesController {
     return await this.servicesService.findAll(query);
   }
 
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    console.log(id);
+    return await this.servicesService.findOne(id);
+  }
+
   @Post('get-services-from-provider')
   async getServicesFromProvider(@Body() body) {
     if (Object.keys(body).length === 0) {
@@ -50,7 +56,7 @@ export class ServicesController {
   }
 
   @Put(':id')
-  async updateService(@Param('id') id, @Body() body: ServiceDto) {
+  async updateService(@Param('id') id: number, @Body() body: ServiceDto) {
     return await this.servicesService.updateService(id, body);
   }
 
