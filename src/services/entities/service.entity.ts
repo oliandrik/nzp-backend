@@ -28,6 +28,7 @@ export class Service {
   description: string;
 
   @ManyToOne(() => ServiceCategory)
+  @JoinColumn()
   category: ServiceCategory;
 
   @Column({ type: 'enum', enum: EServiceStatus })
@@ -40,6 +41,7 @@ export class Service {
   mode: EServiceMode;
 
   @ManyToOne(() => Provider)
+  @JoinColumn()
   provider: Provider;
 
   @OneToOne(() => InternalService)

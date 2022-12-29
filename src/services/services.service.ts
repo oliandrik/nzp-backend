@@ -2,7 +2,7 @@ import { Provider } from 'src/providers/entities/provider.entity';
 import { ProvidersService } from 'src/providers/providers.service';
 import { ServiceCategory } from 'src/service-categories/entities/service-categories.entity';
 import { UpdatesService } from 'src/updates/updates.service';
-import { In, Like, Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 
 import { HttpService } from '@nestjs/axios';
 import {
@@ -206,27 +206,36 @@ export class ServicesService {
   async updateService(id, body) {
     await this.byId(id);
 
-    const oldService = await this.findOne(id);
-
-    console.log(oldService, 'service');
-    const mode: string = body.service.mode.toUpperCase();
-
     let internalService;
     let internalServiceId;
+
+    const mode: string = body.service.mode.toUpperCase();
+
+    const oldInternalService = await this.internalServiceRepository.findOne({
+      where: { service: body.internalService.service },
+    });
+
+    if (!oldInternalService) {
+      internalService = await this.internalServiceRepository.insert({
+        ...body.internalService,
+        type: EServiceType[body.internalService.type.toUpperCase()],
+        created_at: new Date(),
+        updated_at: new Date(),
+      });
+
+      internalServiceId = internalService.raw.insertId;
+    }
 
     return (
       await this.serviceRepository.update(
         { id },
         {
-          ...body,
-          category: { id: body.service.categoryId } as ServiceCategory,
-          provider: { id: body.service.providerId } as Provider,
-          internal_project:
-            EServiceMode[mode] === EServiceMode.AUTO
-              ? ({
-                  id: internalServiceId,
-                } as InternalService)
-              : null,
+          ...body.service,
+          internal_project: oldInternalService
+            ? oldInternalService.id
+            : ({
+                id: internalServiceId,
+              } as InternalService),
           mode: EServiceMode[body.service.mode.toUpperCase()],
           status: EServiceStatus[body.service.status.toUpperCase()],
           type:

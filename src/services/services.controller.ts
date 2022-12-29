@@ -51,8 +51,8 @@ export class ServicesController {
   }
 
   @Post(':id')
-  async duplicateService(@Param() id) {
-    return await this.servicesService.duplicateService(id.id);
+  async duplicateService(@Param('id') id: number) {
+    return await this.servicesService.duplicateService(id);
   }
 
   @Put(':id')
@@ -61,7 +61,7 @@ export class ServicesController {
   }
 
   @Put(':id/change-status')
-  async changEServiceStatus(@Param('id') id, @Body() body) {
+  async changeServiceStatus(@Param('id') id, @Body() body) {
     if (!EServiceStatus[body.status.toUpperCase()]) {
       throw new BadRequestException('Invalid status');
     }
