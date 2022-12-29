@@ -49,6 +49,9 @@ export class Service {
   @Column({ default: true })
   dripfeed: boolean;
 
+  @Column({ default: true })
+  refill: boolean;
+
   @Column()
   cancel: boolean;
 
