@@ -5,7 +5,7 @@ import {
   MinLength,
   IsBoolean,
 } from 'class-validator';
-import { EClientStatus } from 'src/clients/interfaces/client.interfaces';
+import { EUserStatus } from 'src/users/interfaces/user.interfaces';
 
 export class SignUp {
   @IsDefined()
@@ -28,7 +28,9 @@ export class SignUp {
 
   balance: null | number;
   spent: null | number;
-  status: EClientStatus;
+  status: EUserStatus;
   avatar: null;
   gender: null;
+  whatsapp: null;
+  is_confirmed_email: boolean;
 }

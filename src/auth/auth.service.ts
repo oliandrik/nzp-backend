@@ -1,15 +1,9 @@
 import * as bcrypt from 'bcrypt';
-import { ClientEntityService } from 'src/clients/client-entity.service';
-import { Client } from 'src/clients/entities/client.entity';
-import { ReferralSystem } from 'src/clients/entities/referral-system.entity';
 import {
-  EClientGender,
-  EClientRank,
-  EClientStatus,
-} from 'src/clients/interfaces/client.interfaces';
-import { AdminClientsService } from 'src/clients/services/admin-clients.service';
-import { ClientsService } from 'src/clients/services/clients.service';
-import { UserDto } from 'src/users/dto/user.dto';
+  EUserGender,
+  EUserRank,
+  EUserStatus,
+} from 'src/users/interfaces/user.interfaces';
 import { UsersService } from 'src/users/users.service';
 
 import {
@@ -27,76 +21,52 @@ import { ERoles } from './interfaces/roles.interfaces';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly adminClientService: AdminClientsService,
-    private readonly clientService: ClientsService,
-    private readonly ClientEntityService: ClientEntityService,
     private readonly userService: UsersService,
     private readonly jwtService: JwtService,
   ) {}
 
-  async signUp(signUp: SignUp, query) {
-    await this.clientService.findOldClient(signUp.email);
-    await this.clientService.byUsername(signUp.username);
+  async signUp(body: SignUp, query) {
+    const oldUser = await this.userService.byEmail(body.email);
 
-    if (!signUp.terms) {
+    if (oldUser) {
       throw new BadRequestException(
-        'to Register you need to agree to the privacy policy',
+        'User with this email is already in system',
       );
     }
 
-    let ref;
-
-    if (Object.keys(query).length > 0) {
-      ref = await this.clientService.findReferral(Object.values(query));
-    }
-
-    const { email, password, username, terms } = signUp;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const parentId = ref.client;
+    const hashedPassword = await bcrypt.hash(body.password, 10);
 
     const obj = {
-      username,
-      email,
+      username: body.username,
+      email: body.email,
       password: hashedPassword,
-      terms,
+      terms: body.terms,
       balance: 0.0,
       spent: 0.0,
       discount: 0.0,
-      rank: EClientRank.NEW,
-      status: EClientStatus.ACTIVE,
+      rank: EUserRank.NEW,
+      status: EUserStatus.ACTIVE,
       avatar: null,
-      gender: EClientGender.OTHER,
-      role: ERoles.CLIENT,
-      parent: ({ id: parentId } as Client) || null,
+      gender: EUserGender.OTHER,
+      role: ERoles.USER,
     };
-
-    const user = await this.adminClientService.saveClient(obj);
-
-    const tokens = await this.issueTokenPair({
-      email: user.email,
-      id: user.id,
-    });
-
-    return {
-      message: 'User was created',
-      user: this.returnUserFields(user),
-      ...tokens,
-    };
-  }
-
-  async signUpAdmin(signUp: UserDto) {
-    const { email, password } = signUp;
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const obj = { email, password: hashedPassword, role: ERoles.ADMIN };
 
     const user = await this.userService.saveUser(obj);
+    let userEmail;
+    let userId;
+
+    for (const key of Object.keys(user)) {
+      if (key === 'email') {
+        userEmail = user[key];
+      }
+      if (key === 'id') {
+        userId = user[key];
+      }
+    }
 
     const tokens = await this.issueTokenPair({
-      email: user.email,
-      id: user.id,
+      email: userEmail,
+      id: userId,
     });
 
     return {
@@ -106,12 +76,10 @@ export class AuthService {
     };
   }
 
-  async signIn(signIn: SignIn) {
-    const client = await this.validate(signIn);
+  async signIn(body: SignIn) {
+    const user = await this.validate(body);
 
-    console.log(client, 'client');
-
-    const payload = { email: client.email, id: client.id };
+    const payload = { email: user.email, id: user.id };
 
     return {
       message: 'Successfully authenticated',
@@ -119,12 +87,10 @@ export class AuthService {
     };
   }
 
-  async validate(signIn: SignIn) {
-    const { email, password } = signIn;
+  async validate(body: SignIn) {
+    const { email, password } = body;
 
-    const user =
-      (await this.userService.byEmail(email)) ||
-      (await this.ClientEntityService.byEmail(email));
+    const user = await this.userService.byEmail(email);
 
     if (!user) {
       throw new UnauthorizedException(
@@ -157,12 +123,10 @@ export class AuthService {
   }
 
   async sendNewPassword(payload) {
-    const client = await this.ClientEntityService.byEmail(payload.email);
-
+    const client = await this.userService.byEmail(payload.email);
     if (!client) {
       throw new HttpException('Forbidden', HttpStatus.FORBIDDEN);
     }
-
     let generatedPassword = '';
     const characters =
       'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*()';
@@ -172,11 +136,9 @@ export class AuthService {
         Math.floor(Math.random() * charactersLength),
       );
     }
-
     const hashedPassword = await bcrypt.hash(generatedPassword, 10);
-
     return (
-      await this.clientService.updatePassword(client.id, hashedPassword),
+      await this.userService.updatePassword(client.id, hashedPassword),
       { message: `here you can see your new password ${generatedPassword}` }
     );
   }

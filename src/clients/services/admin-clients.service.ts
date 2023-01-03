@@ -198,7 +198,7 @@ export class AdminClientsService {
         status: EClientStatus.ACTIVE,
         avatar: null,
         gender: EClientGender.OTHER,
-        role: ERoles.CLIENT,
+        role: ERoles.USER,
         created_at: new Date(),
         updated_at: new Date(),
         lastAuth: new Date(),

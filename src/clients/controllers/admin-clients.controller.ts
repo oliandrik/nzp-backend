@@ -18,8 +18,9 @@ import { ClientEntityService } from '../client-entity.service';
 
 import { AdminClientsService } from '../services/admin-clients.service';
 
+// @Roles(ERoles.ADMIN)
+
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(ERoles.ADMIN)
 @Controller('clients')
 export class AdminClientsController {
   constructor(

@@ -8,7 +8,13 @@ import {
   JoinColumn,
 } from 'typeorm';
 
-@Entity({ name: 'users' })
+import {
+  EUserGender,
+  EUserRank,
+  EUserStatus,
+} from '../interfaces/user.interfaces';
+
+@Entity({ name: 'people' })
 export class User {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
@@ -28,4 +34,43 @@ export class User {
   @OneToMany(() => Message, (message) => message.user)
   @JoinColumn()
   messages: Message[];
+
+  @Column()
+  terms: boolean;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  balance: number;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  spent: number;
+
+  @Column({ type: 'numeric', precision: 10, scale: 2 })
+  discount: number;
+
+  @Column({ type: 'enum', enum: EUserRank })
+  rank: EUserRank;
+
+  @Column({ type: 'enum', enum: EUserStatus })
+  status: EUserStatus;
+
+  @Column({ nullable: true })
+  avatar: string;
+
+  @Column({ type: 'enum', enum: EUserGender })
+  gender: EUserGender;
+
+  @Column({ default: null })
+  whatsapp: string;
+
+  @Column({ default: false })
+  is_confirmed_email: boolean;
+
+  @Column()
+  created_at: Date;
+
+  @Column()
+  updated_at: Date;
+
+  @Column({ default: null })
+  lastAuth: Date;
 }

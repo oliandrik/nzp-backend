@@ -1,6 +1,7 @@
 import { ClientDto } from 'src/clients/dto/client.dto';
 
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -21,14 +22,13 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body(ValidationPipe) signUp, @Query() query) {
-    console.log(signUp);
-    return await this.authService.signUp(signUp, query);
-  }
-
-  @Post('signup-admin')
-  async signUpAdmin(@Body(ValidationPipe) signUp) {
-    return await this.authService.signUpAdmin(signUp);
+  async signUp(@Body(ValidationPipe) body: SignUp, @Query() query) {
+    if (!body.terms) {
+      throw new BadRequestException(
+        'to Register you need to agree to the privacy policy',
+      );
+    }
+    return await this.authService.signUp(body, query);
   }
 
   @Post('signin')

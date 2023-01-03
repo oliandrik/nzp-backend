@@ -27,9 +27,10 @@ import { EClientGender } from '../interfaces/client.interfaces';
 
 import { ClientsService } from '../services/clients.service';
 
+// @Roles(ERoles.CLIENT)
+
 @Controller('clients')
 @UseGuards(AuthGuard('jwt'), RolesGuard)
-@Roles(ERoles.CLIENT)
 export class ClientsController {
   constructor(
     private readonly clientsService: ClientsService,
