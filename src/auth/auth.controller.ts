@@ -21,7 +21,8 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Post('signup')
-  async signUp(@Body(ValidationPipe) signUp: SignUp, @Query() query) {
+  async signUp(@Body(ValidationPipe) signUp, @Query() query) {
+    console.log(signUp);
     return await this.authService.signUp(signUp, query);
   }
 

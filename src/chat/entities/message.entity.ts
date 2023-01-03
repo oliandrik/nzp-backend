@@ -6,12 +6,11 @@ export class ChatMessage {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: number;
 
-  @Column({ type: 'text' })
-  text: string;
+  @Column('text', { nullable: true })
+  content: string;
 
   @ManyToOne(() => Client)
   client: Client;
-
   @Column()
   created_at: Date;
 

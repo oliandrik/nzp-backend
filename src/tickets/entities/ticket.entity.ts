@@ -1,7 +1,14 @@
-import { Client } from 'src/clients/entities/client.entity';
-import { User } from 'src/users/entities/user.entity';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Order } from 'src/orders/entities/order.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToMany,
+  JoinColumn,
+  OneToOne,
+} from 'typeorm';
 
+import { Message } from './message.entity';
 import { ETicketStatus } from '../interfaces/ticket.interfaces';
 
 @Entity({ name: 'tickets' })
@@ -9,13 +16,17 @@ export class Ticket {
   @PrimaryGeneratedColumn({ type: 'bigint' })
   id: bigint;
 
-  @ManyToOne(() => Client)
-  client: Client;
+  @OneToMany(() => Message, (message) => message.ticket, {
+    cascade: ['insert', 'remove', 'update'],
+  })
+  @JoinColumn()
+  messages: Message[];
 
-  @ManyToOne(() => User)
-  user: User;
+  @OneToOne(() => Order, (order) => order.ticket)
+  @JoinColumn()
+  order: Order;
 
-  @Column()
+  @Column({ default: null, type: 'text' })
   subject: string;
 
   @Column({ type: 'enum', enum: ETicketStatus })
@@ -23,7 +34,4 @@ export class Ticket {
 
   @Column()
   created_at: Date;
-
-  @Column()
-  updated_at: Date;
 }

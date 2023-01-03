@@ -1,5 +1,13 @@
 import { ERoles } from 'src/auth/interfaces/roles.interfaces';
-import { Entity, Column, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
+import { Message } from 'src/tickets/entities/message.entity';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  OneToMany,
+  JoinColumn,
+} from 'typeorm';
 
 import { ReferralSystem } from './referral-system.entity';
 import {
@@ -48,6 +56,10 @@ export class Client {
 
   @Column({ type: 'enum', enum: ERoles })
   role: ERoles;
+
+  @OneToMany(() => Message, (message) => message.client)
+  @JoinColumn()
+  messages: Message[];
 
   @ManyToOne(() => ReferralSystem)
   parent: ReferralSystem;

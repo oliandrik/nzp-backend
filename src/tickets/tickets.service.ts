@@ -1,20 +1,56 @@
 import { Client } from 'src/clients/entities/client.entity';
+import { ClientsService } from 'src/clients/services/clients.service';
+import { Order } from 'src/orders/entities/order.entity';
 import { User } from 'src/users/entities/user.entity';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Ticket } from './entities/ticket.entity';
+import { GatewayGateway } from './gateway/gateway.gateway';
+import { MessagesService } from './messages/messages.service';
 
 @Injectable()
 export class TicketsService {
   constructor(
     @InjectRepository(Ticket)
     private readonly ticketRepository: Repository<Ticket>,
+    private readonly messageService: MessagesService,
+    private readonly clientService: ClientsService,
+    private readonly server: GatewayGateway,
   ) {}
 
   async findAll() {
     return await this.ticketRepository.find({ loadRelationIds: true });
+  }
+
+  async getConversations() {
+    return this.ticketRepository.createQueryBuilder('ticket').getMany();
+  }
+
+  async getConversation(id) {
+    const ticket = await this.ticketRepository.findOne({
+      relations: {
+        messages: true,
+      },
+      select: {
+        messages: {
+          id: true,
+          content: true,
+          created_at: true,
+          client: {
+            email: true,
+          },
+        },
+        order: {
+          id: true,
+        },
+      },
+      where: {
+        id: id,
+      },
+    });
+    return ticket;
   }
 
   async byId(id) {
@@ -29,47 +65,31 @@ export class TicketsService {
     return ticket;
   }
 
-  async bySubject(subject) {
-    return await this.ticketRepository.find({
-      where: {
-        subject: Like(`%${subject}%`),
-      },
-      loadRelationIds: true,
-    });
-  }
-
-  async byClient(client) {
-    return await this.ticketRepository.find({
-      where: {
-        client: client,
-      },
-      loadRelationIds: true,
-    });
-  }
-
   async create(body) {
-    return (
-      await this.ticketRepository.insert({
-        ...body,
-        client: { id: body.client_id } as Client,
-        user: { id: body.user_id } as User,
+    const findByOrder = await this.ticketRepository.findOne({
+      where: { order: { id: body.orderId } as Order },
+    });
+
+    let ticket;
+    if (!findByOrder) {
+      ticket = await this.ticketRepository.insert({
+        order: { id: body.orderId } as Order,
         created_at: new Date(),
-        updated_at: new Date(),
-      }),
-      { message: 'Ticket was successfully created' }
-    );
-  }
+      });
+    }
 
-  async update(id, body) {
-    await this.byId(id);
+    const message = {
+      content: body.obj.message,
+      client: { id: body.clientId } as Client,
+      user: { id: body.userId } as User,
+      ticket: findByOrder ? findByOrder.id : ticket.raw.insertId,
+      created_at: new Date(),
+    };
 
-    return (
-      await this.ticketRepository.update(
-        { id },
-        { ...body, updated_at: new Date() },
-      ),
-      { message: 'Ticket was updated' }
-    );
+    await this.messageService.getMessageRepository().insert(message);
+
+    this.server.server.emit('createMessage', message);
+    return ticket;
   }
 
   async deleteOne(id: number) {

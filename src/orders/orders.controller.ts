@@ -30,8 +30,6 @@ export class OrdersController {
     for (let i = 0; i < 98; i++) {
       await this.ordersService.create(body);
     }
-
-    // return ;
   }
 
   @Put(':id')

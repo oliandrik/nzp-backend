@@ -1,10 +1,14 @@
 import { Client } from 'src/clients/entities/client.entity';
 import { Service } from 'src/services/entities/service.entity';
+import { Ticket } from 'src/tickets/entities/ticket.entity';
 import {
   Column,
   Entity,
   Index,
+  JoinColumn,
   ManyToOne,
+  OneToMany,
+  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 
@@ -45,6 +49,9 @@ export class Order {
   @Column()
   @Index()
   mode: EOrderMode;
+
+  @OneToOne(() => Ticket, (ticket) => ticket.order)
+  ticket: Ticket;
 
   @Column()
   created_at: Date;

@@ -1,4 +1,5 @@
 import { CurrentUser } from 'src/auth/decorators/currentUser.decorator';
+import { Client } from 'src/clients/entities/client.entity';
 
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '@nestjs/passport';
@@ -19,4 +20,18 @@ export class ChatController {
     // validation
     return this.chatGetaway.sendMessageTo(user.id, body.to, body.message);
   }
+
+  // @Post()
+  // async createConversation(
+  //   @CurrentUser() user: Client,
+  //   @Body() createConversationPayload,
+  // ) {
+  //   const conversation = await this.chatService.createConversation(
+  //     user,
+  //     createConversationPayload,
+  //   );
+
+  //   this.events.emit('conversation.create', conversation);
+  //   return conversation;
+  // }
 }
