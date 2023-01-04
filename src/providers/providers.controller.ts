@@ -15,14 +15,19 @@ import { ProvidersService } from './providers.service';
 export class ProvidersController {
   constructor(private readonly providersService: ProvidersService) {}
 
-  @Post()
-  async createProvider(@Body() body: ProviderDto) {
-    return await this.providersService.create(body);
-  }
-
   @Get()
   async getProviders(@Query() query) {
     return await this.providersService.findAll(query);
+  }
+
+  @Get(':id')
+  async findOne(@Param('id') id: number) {
+    return await this.providersService.byId(id);
+  }
+
+  @Post()
+  async createProvider(@Body() body: ProviderDto) {
+    return await this.providersService.create(body);
   }
 
   @Put(':id')
