@@ -9,6 +9,7 @@ import { MultiCurrency } from './multi-currency/entities/multi-currency.entity';
 import { Order } from './orders/entities/order.entity';
 import { PaymentMethod } from './payment-methods/entities/payment-method.entity';
 import { Provider } from './providers/entities/provider.entity';
+import { Test } from './test/entities/test.entity';
 import { MessageAttachment } from './tickets/entities/message-attachment.entity';
 import { Message } from './tickets/entities/message.entity';
 import { Ticket } from './tickets/entities/ticket.entity';
@@ -39,6 +40,7 @@ const entities = [
   Update,
   Message,
   MessageAttachment,
+  Test,
 ];
 
 export default entities;

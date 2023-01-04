@@ -17,6 +17,7 @@ import { OrdersModule } from './orders/orders.module';
 import { PaymentMethodsModule } from './payment-methods/payment-methods.module';
 import { PaymentToClientModule } from './payment-to-client/payment-to-client.module';
 import { ProvidersModule } from './providers/providers.module';
+import { TestModule } from './test/test.module';
 import { GatewayModule } from './tickets/gateway/gateway.module';
 import { MessageAttachmentModule } from './tickets/message-attachment/message-attachment.module';
 import { MessagesModule } from './tickets/messages/messages.module';
@@ -60,6 +61,7 @@ import { ServicesModule } from './services/services.module';
     // TicketsModule,
     // ChatModule,
     UpdatesModule,
+    TestModule,
     // MessagesModule,
     // MessageAttachmentModule,
     // GatewayModule,
