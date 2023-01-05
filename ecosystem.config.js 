@@ -1,0 +1,8 @@
+module.exports = {   
+    apps : [{     
+        name: "naizop",    
+        script: "npm",
+        args: "run start:prod",
+        watch: false
+    }] 
+}
