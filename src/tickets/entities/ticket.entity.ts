@@ -5,6 +5,7 @@ import {
   PrimaryGeneratedColumn,
   OneToMany,
   JoinColumn,
+  ManyToOne,
   OneToOne,
 } from 'typeorm';
 
@@ -28,10 +29,12 @@ export class Ticket {
 
   @Column({ default: null, type: 'text' })
   subject: string;
-
-  @Column({ type: 'enum', enum: ETicketStatus })
-  status: ETicketStatus;
+  // @Column({ type: 'enum', enum: ETicketStatus })
+  // status: ETicketStatus;
 
   @Column()
   created_at: Date;
+
+  // @Column()
+  // updated_at: Date;
 }

@@ -28,7 +28,7 @@ export class User {
   @Column()
   password: string;
 
-  @Column({ type: 'enum', enum: ERoles })
+  @Column({ type: 'enum', enum: ERoles, default: ERoles.USER })
   role: ERoles;
 
   @OneToMany(() => Message, (message) => message.user)

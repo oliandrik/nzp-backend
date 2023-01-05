@@ -1,7 +1,7 @@
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { Client } from 'src/clients/entities/client.entity';
-import { UsersService } from 'src/users/users.service';
+import { AdminUsersService } from 'src/users/services/admin-users.service';
 
 import {
   WebSocketGateway,
@@ -18,7 +18,7 @@ export class ChatGateway {
   constructor(
     private readonly chatService: ChatService,
     private authService: AuthService,
-    private userService: UsersService,
+    private userService: AdminUsersService,
   ) {}
 
   @WebSocketServer()
