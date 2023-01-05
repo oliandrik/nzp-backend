@@ -15,6 +15,7 @@ async function bootstrap() {
     methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
   });
 
+  console.log(process.env.PORT);
   const PORT = process.env.PORT || 4040;
 
   await app.listen(PORT, null, () => {
