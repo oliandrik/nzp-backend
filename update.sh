@@ -1,0 +1,1 @@
+git pull && npm run build && pm2 restart ecosystem.config.js && pm2 logs 0
