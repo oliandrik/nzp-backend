@@ -36,6 +36,11 @@ export class AuthController {
     return await this.authService.signIn(signIn);
   }
 
+  @Post('create-admin')
+  async createAdmin(@Body() body) {
+    return await this.authService.admin(body);
+  }
+
   @Post('admin-signin')
   async adminSignIn(@Body() signIn: SignIn) {
     return await this.authService.signIn(signIn);

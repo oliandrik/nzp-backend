@@ -1,16 +1,12 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ClientEntityService } from 'src/clients/client-entity.service';
-import { UsersService } from 'src/users/users.service';
+import { AdminUsersService } from 'src/users/services/admin-users.service';
 
 import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(
-    private clientService: ClientEntityService,
-    private userService: UsersService,
-  ) {
+  constructor(private userService: AdminUsersService) {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
       ignoreExpiration: false,
@@ -20,10 +16,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    console.log(payload, 'payload');
-    const user =
-      (await this.clientService.byEmail(payload.email)) ||
-      (await this.userService.byEmail(payload.email));
+    const user = await this.userService.byEmail(payload.email);
 
     if (!user) {
       throw new UnauthorizedException('Error Authorize');

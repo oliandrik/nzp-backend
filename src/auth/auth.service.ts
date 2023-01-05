@@ -4,7 +4,7 @@ import {
   EUserRank,
   EUserStatus,
 } from 'src/users/interfaces/user.interfaces';
-import { UsersService } from 'src/users/users.service';
+import { AdminUsersService } from 'src/users/services/admin-users.service';
 
 import {
   BadRequestException,
@@ -21,7 +21,7 @@ import { ERoles } from './interfaces/roles.interfaces';
 @Injectable()
 export class AuthService {
   constructor(
-    private readonly userService: UsersService,
+    private readonly userService: AdminUsersService,
     private readonly jwtService: JwtService,
   ) {}
 
@@ -74,6 +74,10 @@ export class AuthService {
       user: this.returnUserFields(user),
       ...tokens,
     };
+  }
+
+  async admin(body) {
+    return await this.userService.createAdmin(body);
   }
 
   async signIn(body: SignIn) {
